@@ -130,7 +130,30 @@ export const useWidgetStore = create<WidgetState>((set, get) => ({
         m.id === messageId && m.hitl ? { ...m, hitl: { ...m.hitl, approved: true } } : m,
       ),
     })),
-  sendTaskMessage: () => {},
+  sendTaskMessage: (taskId, text) => {
+    const trimmed = text.trim()
+    if (!trimmed) return
+    const task = get().tasks.find((t) => t.id === taskId)
+    const time = nowTime()
+    set((s) => ({
+      taskConversations: {
+        ...s.taskConversations,
+        [taskId]: [...(s.taskConversations[taskId] ?? []), { role: 'user', text: trimmed, time }],
+      },
+    }))
+    const reply =
+      task && task.status === 'done'
+        ? `Công việc này đã hoàn thành rồi ạ. ${task.lastUpdate}. Anh cần em gửi lại kết quả không ạ?`
+        : `Cập nhật mới nhất: ${task ? task.lastUpdate.toLowerCase() : 'đang xử lý'}. Em sẽ báo ngay khi có tiến triển mới ạ.`
+    setTimeout(() => {
+      set((s) => ({
+        taskConversations: {
+          ...s.taskConversations,
+          [taskId]: [...(s.taskConversations[taskId] ?? []), { role: 'bot', text: reply, time: nowTime() }],
+        },
+      }))
+    }, 900)
+  },
   markNotiRead: () => {},
   markAllNotisRead: () => {},
   setTheme: () => {},

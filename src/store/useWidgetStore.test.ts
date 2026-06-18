@@ -92,3 +92,36 @@ describe('chat', () => {
     expect(m?.hitl?.approved).toBe(true)
   })
 })
+
+describe('task conversation', () => {
+  beforeEach(() => { reset(); vi.useFakeTimers() })
+  afterEach(() => { vi.useRealTimers() })
+
+  it('appends the user question immediately', () => {
+    const before = useWidgetStore.getState().taskConversations['t1'].length
+    useWidgetStore.getState().sendTaskMessage('t1', 'Việc đến đâu rồi?')
+    expect(useWidgetStore.getState().taskConversations['t1'].length).toBe(before + 1)
+    expect(useWidgetStore.getState().taskConversations['t1'].at(-1)).toMatchObject({ role: 'user', text: 'Việc đến đâu rồi?' })
+  })
+
+  it('adds a status bot reply after the delay (in-progress task)', () => {
+    useWidgetStore.getState().sendTaskMessage('t1', 'Khi nào xong?')
+    vi.advanceTimersByTime(1000)
+    const last = useWidgetStore.getState().taskConversations['t1'].at(-1)
+    expect(last?.role).toBe('bot')
+    expect(last?.text.toLowerCase()).toContain('cập nhật mới nhất')
+  })
+
+  it('done tasks get a completed-style reply', () => {
+    useWidgetStore.getState().sendTaskMessage('t4', 'Xong chưa em?')
+    vi.advanceTimersByTime(1000)
+    const last = useWidgetStore.getState().taskConversations['t4'].at(-1)
+    expect(last?.text).toContain('đã hoàn thành')
+  })
+
+  it('ignores empty input', () => {
+    const before = useWidgetStore.getState().taskConversations['t1'].length
+    useWidgetStore.getState().sendTaskMessage('t1', '  ')
+    expect(useWidgetStore.getState().taskConversations['t1'].length).toBe(before)
+  })
+})
