@@ -8,6 +8,8 @@
 
 **Tech Stack:** Vite, React 18, TypeScript, Tailwind CSS, shadcn/ui, lucide-react, Zustand, Vitest + React Testing Library.
 
+**Toolchain:** Node 24 (installed via nvm as `v24.9.0`) and **Yarn** (1.22.x) as the package manager. Run `nvm use 24` in the project shell before any command; a `.nvmrc` pins it. All installs/scripts use `yarn` (the one-off shadcn generator uses `npx`, which is the Node-bundled runner, not an npm project install).
+
 **Reference:** The source prototype is `/Users/nghiepbui/Downloads/chang-webview.html` (1260 lines). Line numbers below (e.g. `proto:910-961`) point at the exact prototype source to match for fidelity. Preserve all Vietnamese copy verbatim.
 
 ---
@@ -47,28 +49,36 @@ chang-webview/                    (project root = /Users/nghiepbui/Desktop/PERSO
 ## Task 1: Scaffold project & install dependencies
 
 **Files:**
-- Create: `package.json`, `vite.config.ts`, `tsconfig.json`, `tsconfig.node.json`, `index.html`, `src/main.tsx`, `src/App.tsx`, `src/index.css`, `src/vite-env.d.ts`
+- Create: `.nvmrc`, `package.json`, `vite.config.ts`, `tsconfig.json`, `tsconfig.node.json`, `index.html`, `src/main.tsx`, `src/App.tsx`, `src/index.css`, `src/vite-env.d.ts`
 
-- [ ] **Step 1: Scaffold Vite React-TS into the (non-empty) project dir**
+- [ ] **Step 1: Select Node 24 and pin it**
+
+```bash
+cd /Users/nghiepbui/Desktop/PERSONAL/superpowers-demo
+nvm use 24
+node -v   # expect v24.9.0
+echo "24" > .nvmrc
+```
+
+- [ ] **Step 2: Scaffold Vite React-TS into the (non-empty) project dir**
 
 The project root already contains `docs/`. Scaffold into the current directory using a temp dir to avoid the "directory not empty" prompt:
 
 ```bash
-cd /Users/nghiepbui/Desktop/PERSONAL/superpowers-demo
-npm create vite@latest .vite-tmp -- --template react-ts
+yarn create vite .vite-tmp --template react-ts
 cp -R .vite-tmp/. . && rm -rf .vite-tmp
 ```
 
-- [ ] **Step 2: Install runtime + dev dependencies**
+- [ ] **Step 3: Install runtime + dev dependencies with Yarn**
 
 ```bash
-npm install
-npm install zustand lucide-react class-variance-authority clsx tailwind-merge tailwindcss-animate
-npm install -D tailwindcss@3 postcss autoprefixer @types/node
-npm install -D vitest @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom
+yarn install
+yarn add zustand lucide-react class-variance-authority clsx tailwind-merge tailwindcss-animate
+yarn add -D tailwindcss@3 postcss autoprefixer @types/node
+yarn add -D vitest @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom
 ```
 
-- [ ] **Step 3: Replace `index.html` with fonts + Vietnamese lang**
+- [ ] **Step 4: Replace `index.html` with fonts + Vietnamese lang**
 
 ```html
 <!DOCTYPE html>
@@ -88,16 +98,16 @@ npm install -D vitest @testing-library/react @testing-library/jest-dom @testing-
 </html>
 ```
 
-- [ ] **Step 4: Verify the scaffold runs**
+- [ ] **Step 5: Verify the scaffold runs**
 
-Run: `npm run build`
+Run: `yarn build`
 Expected: Vite build succeeds (TypeScript compiles, `dist/` produced).
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit** (include `.nvmrc` and `yarn.lock`)
 
 ```bash
 git add -A
-git commit -m "chore: scaffold Vite + React + TS project"
+git commit -m "chore: scaffold Vite + React + TS project (Node 24 + Yarn)"
 ```
 
 ---
@@ -309,7 +319,7 @@ export default defineConfig({
 
 - [ ] **Step 8: Verify build still compiles**
 
-Run: `npm run build`
+Run: `yarn build`
 Expected: success.
 
 - [ ] **Step 9: Commit**
@@ -336,7 +346,7 @@ If the CLI prompts or fails on alias detection, confirm `components.json` from T
 
 - [ ] **Step 2: Verify the generated files import `@/lib/utils`**
 
-Run: `npm run build`
+Run: `yarn build`
 Expected: success (the `@` alias resolves; primitives compile).
 
 - [ ] **Step 3: Commit**
@@ -429,7 +439,7 @@ export type Tab = 'chat' | 'tasks' | 'noti'
 
 - [ ] **Step 2: Verify it type-checks**
 
-Run: `npx tsc --noEmit`
+Run: `yarn tsc --noEmit`
 Expected: no errors.
 
 - [ ] **Step 3: Commit**
@@ -559,7 +569,7 @@ export const QUICK_SUGGESTIONS = [
 
 - [ ] **Step 4: Verify type-check**
 
-Run: `npx tsc --noEmit`
+Run: `yarn tsc --noEmit`
 Expected: no errors.
 
 - [ ] **Step 5: Commit**
@@ -659,7 +669,7 @@ describe('navigation', () => {
 
 - [ ] **Step 5: Run the test to verify it fails**
 
-Run: `npm test -- src/store/useWidgetStore.test.ts`
+Run: `yarn test src/store/useWidgetStore.test.ts`
 Expected: FAIL — cannot import `useWidgetStore` (module not found).
 
 - [ ] **Step 6: Implement the store skeleton + navigation** — `src/store/useWidgetStore.ts`
@@ -777,7 +787,7 @@ export { nowTime, nextId }
 
 - [ ] **Step 7: Run the test to verify it passes**
 
-Run: `npm test -- src/store/useWidgetStore.test.ts`
+Run: `yarn test src/store/useWidgetStore.test.ts`
 Expected: PASS (navigation describe block green).
 
 - [ ] **Step 8: Commit**
@@ -847,7 +857,7 @@ describe('chat', () => {
 
 - [ ] **Step 2: Run to verify the new tests fail**
 
-Run: `npm test -- src/store/useWidgetStore.test.ts`
+Run: `yarn test src/store/useWidgetStore.test.ts`
 Expected: FAIL — `sendChatMessage`/`newChat`/`approveHitl` are no-ops.
 
 - [ ] **Step 3: Implement chat actions** — in `useWidgetStore.ts` replace the three temporary no-ops (`sendChatMessage`, `newChat`, `approveHitl`) with:
@@ -901,7 +911,7 @@ import { SEED_MESSAGES, GREETING_HTML } from '@/data/messages'
 
 - [ ] **Step 4: Run to verify all store tests pass**
 
-Run: `npm test -- src/store/useWidgetStore.test.ts`
+Run: `yarn test src/store/useWidgetStore.test.ts`
 Expected: PASS (navigation + chat blocks green).
 
 - [ ] **Step 5: Commit**
@@ -957,7 +967,7 @@ describe('task conversation', () => {
 
 - [ ] **Step 2: Run to verify it fails**
 
-Run: `npm test -- src/store/useWidgetStore.test.ts`
+Run: `yarn test src/store/useWidgetStore.test.ts`
 Expected: FAIL — `sendTaskMessage` is a no-op.
 
 - [ ] **Step 3: Implement** — replace the `sendTaskMessage` no-op in `useWidgetStore.ts` with (logic ported from `proto:1116-1133`):
@@ -991,7 +1001,7 @@ Expected: FAIL — `sendTaskMessage` is a no-op.
 
 - [ ] **Step 4: Run to verify it passes**
 
-Run: `npm test -- src/store/useWidgetStore.test.ts`
+Run: `yarn test src/store/useWidgetStore.test.ts`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
@@ -1039,7 +1049,7 @@ describe('notifications + theme', () => {
 
 - [ ] **Step 2: Run to verify it fails**
 
-Run: `npm test -- src/store/useWidgetStore.test.ts`
+Run: `yarn test src/store/useWidgetStore.test.ts`
 Expected: FAIL — noti/theme actions are no-ops.
 
 - [ ] **Step 3: Implement** — replace the `markNotiRead`, `markAllNotisRead`, `setTheme`, `cycleTheme` no-ops:
@@ -1081,7 +1091,7 @@ export function loadInitialTheme(): Theme {
 
 - [ ] **Step 4: Run to verify all store tests pass**
 
-Run: `npm test`
+Run: `yarn test`
 Expected: PASS (all describe blocks green).
 
 - [ ] **Step 5: Commit**
@@ -1118,7 +1128,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 - [ ] **Step 2: Verify build**
 
-Run: `npm run build`
+Run: `yarn build`
 Expected: success.
 
 - [ ] **Step 3: Commit**
@@ -1406,7 +1416,7 @@ it('shows the pending task badge (2) and unread noti badge (3)', () => {
 
 - [ ] **Step 10: Run the TabBar test**
 
-Run: `npm test -- src/components/TabBar.test.tsx`
+Run: `yarn test src/components/TabBar.test.tsx`
 Expected: PASS.
 
 - [ ] **Step 11: Commit**
@@ -1890,7 +1900,7 @@ it('clicking a task card opens its detail view', async () => {
 
 - [ ] **Step 6: Run the test**
 
-Run: `npm test -- src/components/tasks/TaskCard.test.tsx`
+Run: `yarn test src/components/tasks/TaskCard.test.tsx`
 Expected: PASS.
 
 - [ ] **Step 7: Commit**
@@ -2001,7 +2011,7 @@ export function TaskDetailPanel() {
 
 - [ ] **Step 2: Verify type-check**
 
-Run: `npx tsc --noEmit`
+Run: `yarn tsc --noEmit`
 Expected: no errors.
 
 - [ ] **Step 3: Commit**
@@ -2077,7 +2087,7 @@ export function NotificationsPanel() {
 
 - [ ] **Step 3: Verify build (full app now compiles)**
 
-Run: `npm run build`
+Run: `yarn build`
 Expected: success — all panel imports in `ChangWidget` resolve.
 
 - [ ] **Step 4: Commit**
@@ -2104,17 +2114,17 @@ Ensure no file imports `./App.css` (the new `App.tsx` from Task 11 does not).
 
 - [ ] **Step 2: Run the full test suite**
 
-Run: `npm test`
+Run: `yarn test`
 Expected: all store + component tests PASS.
 
 - [ ] **Step 3: Type-check + production build**
 
-Run: `npx tsc --noEmit && npm run build`
+Run: `yarn tsc --noEmit && yarn build`
 Expected: no type errors; build succeeds.
 
 - [ ] **Step 4: Manual smoke check in the browser**
 
-Run: `npm run dev`
+Run: `yarn dev`
 Open the printed URL and verify against the prototype:
 - Glass widget bottom-right over the violet gradient stage; Sáng/Tối toggle and header theme button both switch theme (and the choice survives reload).
 - Chat: quick suggestions collapse; sending a message shows typing then a bot reply; "Duyệt & gửi" flips the HITL card to the green approved state; task-inline "Mở trong Công việc" opens detail.
@@ -2137,4 +2147,4 @@ git commit -m "chore: remove scaffold leftovers; final verification"
 - **Spec coverage:** stack (T1–T3), theme tokens + glass + enriched backdrop (T2, T7/Stage), types (T4), mock data (T5), Zustand store with all actions/selectors (T6–T9), theme persistence (T9–T10), shadcn primitives (T3), full component tree incl. demo stage/launcher/mobile (T11–T15), every 1:1 behavior from spec §5 (T6–T15), testing (T6–T9, T11, T13), error handling — unknown task id / empty input / escaping (T6, T7, T8, MessageBubble) — all mapped to tasks.
 - **Placeholders:** none — every code/test step has full content.
 - **Type consistency:** action names (`sendChatMessage`, `newChat`, `approveHitl`, `sendTaskMessage`, `markNotiRead`, `markAllNotisRead`, `setTheme`, `cycleTheme`), selectors (`pendingTaskCount`, `unreadNotiCount`, `filteredTasks`), and types (`Message`, `Task`, `Notification`, `Tab`, `Theme`, `TaskInlinePayload`, `HitlPayload`) are defined in T4/T6 and used consistently in T11–T15.
-- **Known sequencing note:** `ChangWidget` (T11) imports panels built in T12–T15, so the full `npm run build` only passes after T15 — called out explicitly in T11 Step 9; intermediate per-task tests/tsc target only their own files.
+- **Known sequencing note:** `ChangWidget` (T11) imports panels built in T12–T15, so the full `yarn build` only passes after T15 — called out explicitly in T11 Step 9; intermediate per-task tests/tsc target only their own files.
