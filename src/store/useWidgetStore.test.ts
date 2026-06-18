@@ -116,7 +116,9 @@ describe('task conversation', () => {
     useWidgetStore.getState().sendTaskMessage('t4', 'Xong chưa em?')
     vi.advanceTimersByTime(1000)
     const last = useWidgetStore.getState().taskConversations['t4'].at(-1)
-    expect(last?.text).toContain('đã hoàn thành')
+    expect(last?.role).toBe('bot')
+    // phrase unique to the generated done-reply (not present in the t4 seed convo)
+    expect(last?.text).toContain('gửi lại kết quả')
   })
 
   it('ignores empty input', () => {
