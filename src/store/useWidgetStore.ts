@@ -73,6 +73,20 @@ const initialState = () => ({
   theme: 'light' as Theme,
 })
 
+const THEME_KEY = 'chang-theme'
+function applyTheme(t: Theme) {
+  if (typeof document === 'undefined') return
+  document.documentElement.classList.toggle('dark', t === 'dark')
+  try { localStorage.setItem(THEME_KEY, t) } catch { /* ignore */ }
+}
+export function loadInitialTheme(): Theme {
+  if (typeof window === 'undefined') return 'light'
+  const saved = (() => { try { return localStorage.getItem(THEME_KEY) } catch { return null } })()
+  const t: Theme = saved === 'dark' ? 'dark' : 'light'
+  applyTheme(t)
+  return t
+}
+
 export const useWidgetStore = create<WidgetState>((set, get) => ({
   ...initialState(),
 
@@ -154,10 +168,20 @@ export const useWidgetStore = create<WidgetState>((set, get) => ({
       }))
     }, 900)
   },
-  markNotiRead: () => {},
-  markAllNotisRead: () => {},
-  setTheme: () => {},
-  cycleTheme: () => {},
+  markNotiRead: (id) =>
+    set((s) => ({ notifications: s.notifications.map((n) => (n.id === id ? { ...n, unread: false } : n)) })),
+  markAllNotisRead: () =>
+    set((s) => ({ notifications: s.notifications.map((n) => ({ ...n, unread: false })) })),
+
+  setTheme: (t) => {
+    applyTheme(t)
+    set({ theme: t })
+  },
+  cycleTheme: () => {
+    const next: Theme = get().theme === 'light' ? 'dark' : 'light'
+    applyTheme(next)
+    set({ theme: next })
+  },
 
   __resetForTest: () => set(initialState()),
 }))

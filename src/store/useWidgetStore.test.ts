@@ -125,3 +125,28 @@ describe('task conversation', () => {
     expect(useWidgetStore.getState().taskConversations['t1'].length).toBe(before)
   })
 })
+
+describe('notifications + theme', () => {
+  beforeEach(reset)
+
+  it('seed has 3 unread', () => {
+    expect(useWidgetStore.getState().unreadNotiCount()).toBe(3)
+  })
+
+  it('markNotiRead clears one', () => {
+    useWidgetStore.getState().markNotiRead('n1')
+    expect(useWidgetStore.getState().unreadNotiCount()).toBe(2)
+  })
+
+  it('markAllNotisRead clears all', () => {
+    useWidgetStore.getState().markAllNotisRead()
+    expect(useWidgetStore.getState().unreadNotiCount()).toBe(0)
+  })
+
+  it('setTheme + cycleTheme toggle the theme', () => {
+    useWidgetStore.getState().setTheme('dark')
+    expect(useWidgetStore.getState().theme).toBe('dark')
+    useWidgetStore.getState().cycleTheme()
+    expect(useWidgetStore.getState().theme).toBe('light')
+  })
+})
