@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import type { Message, Notification, Task, TaskFilter, Tab, Theme } from '@/types'
 import { SEED_TASKS } from '@/data/tasks'
 import { SEED_NOTIFICATIONS } from '@/data/notifications'
-import { SEED_MESSAGES } from '@/data/messages'
+import { SEED_MESSAGES, GREETING_HTML } from '@/data/messages'
 
 interface WidgetState {
   activeTab: Tab
@@ -92,10 +92,44 @@ export const useWidgetStore = create<WidgetState>((set, get) => ({
   unreadNotiCount: () => get().notifications.filter((n) => n.unread).length,
   filteredTasks: () => get().tasks.filter((t) => t.bucket.includes(get().taskFilter)),
 
-  // implemented in later tasks — temporary no-ops so the type is satisfied
-  sendChatMessage: () => {},
-  newChat: () => {},
-  approveHitl: () => {},
+  sendChatMessage: (text) => {
+    const trimmed = text.trim()
+    if (!trimmed) return
+    const time = nowTime()
+    set((s) => ({
+      messages: [...s.messages, { id: nextId(), role: 'user', time, kind: 'text', text: trimmed }],
+      isTyping: true,
+    }))
+    setTimeout(() => {
+      set((s) => ({
+        isTyping: false,
+        messages: [
+          ...s.messages,
+          {
+            id: nextId(), role: 'bot', time: nowTime(), kind: 'text',
+            html: 'Em đã nhận yêu cầu và đang xử lý. Em sẽ tạo công việc để anh theo dõi tiến độ và báo lại khi cần anh xác nhận nhé.',
+          },
+        ],
+      }))
+    }, 1100)
+  },
+
+  newChat: () =>
+    set({
+      activeTab: 'chat',
+      currentTaskId: null,
+      historyOpen: false,
+      quickCollapsed: false,
+      isTyping: false,
+      messages: [{ id: nextId(), role: 'bot', time: nowTime(), kind: 'text', html: GREETING_HTML }],
+    }),
+
+  approveHitl: (messageId) =>
+    set((s) => ({
+      messages: s.messages.map((m) =>
+        m.id === messageId && m.hitl ? { ...m, hitl: { ...m.hitl, approved: true } } : m,
+      ),
+    })),
   sendTaskMessage: () => {},
   markNotiRead: () => {},
   markAllNotisRead: () => {},

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useWidgetStore } from './useWidgetStore'
 
 const reset = () => useWidgetStore.getState().__resetForTest()
@@ -45,5 +45,50 @@ describe('navigation', () => {
     expect(s.filteredTasks().every((t) => t.bucket.includes('pending'))).toBe(true)
     s.setTaskFilter('done')
     expect(useWidgetStore.getState().filteredTasks().length).toBe(5)
+  })
+})
+
+describe('chat', () => {
+  beforeEach(() => { reset(); vi.useFakeTimers() })
+  afterEach(() => { vi.useRealTimers() })
+
+  it('sendChatMessage appends a user message and shows typing', () => {
+    const before = useWidgetStore.getState().messages.length
+    useWidgetStore.getState().sendChatMessage('Xin chào')
+    const s = useWidgetStore.getState()
+    expect(s.messages.length).toBe(before + 1)
+    expect(s.messages.at(-1)).toMatchObject({ role: 'user', text: 'Xin chào' })
+    expect(s.isTyping).toBe(true)
+  })
+
+  it('ignores empty / whitespace-only input', () => {
+    const before = useWidgetStore.getState().messages.length
+    useWidgetStore.getState().sendChatMessage('   ')
+    expect(useWidgetStore.getState().messages.length).toBe(before)
+  })
+
+  it('after the delay it appends a bot reply and stops typing', () => {
+    useWidgetStore.getState().sendChatMessage('Xin chào')
+    vi.advanceTimersByTime(1200)
+    const s = useWidgetStore.getState()
+    expect(s.isTyping).toBe(false)
+    expect(s.messages.at(-1)?.role).toBe('bot')
+  })
+
+  it('newChat resets the thread to a single greeting and reopens suggestions', () => {
+    useWidgetStore.getState().sendChatMessage('Xin chào')
+    useWidgetStore.getState().newChat()
+    const s = useWidgetStore.getState()
+    expect(s.messages).toHaveLength(1)
+    expect(s.messages[0]).toMatchObject({ role: 'bot', kind: 'text' })
+    expect(s.quickCollapsed).toBe(false)
+    expect(s.historyOpen).toBe(false)
+    expect(s.activeTab).toBe('chat')
+  })
+
+  it('approveHitl flips the targeted hitl message to approved', () => {
+    useWidgetStore.getState().approveHitl('m4')
+    const m = useWidgetStore.getState().messages.find((x) => x.id === 'm4')
+    expect(m?.hitl?.approved).toBe(true)
   })
 })
