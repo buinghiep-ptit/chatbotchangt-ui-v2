@@ -2,18 +2,31 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, expect, it } from 'vitest'
 import { TabBar } from './TabBar'
+import { Tabs } from '@/components/ui/tabs'
 import { useWidgetStore } from '@/store/useWidgetStore'
+import type { Tab } from '@/types'
+
+function renderTabBar(activeTab: Tab = 'chat') {
+  return render(
+    <Tabs
+      value={activeTab}
+      onValueChange={(v) => useWidgetStore.getState().switchTab(v as Tab)}
+    >
+      <TabBar />
+    </Tabs>,
+  )
+}
 
 beforeEach(() => useWidgetStore.getState().__resetForTest())
 
 it('clicking the Thông báo tab switches the active tab', async () => {
-  render(<TabBar />)
+  renderTabBar()
   await userEvent.click(screen.getByText('Thông báo'))
   expect(useWidgetStore.getState().activeTab).toBe('noti')
 })
 
 it('shows the pending task badge (2) and unread noti badge (3)', () => {
-  render(<TabBar />)
+  renderTabBar()
   expect(screen.getByText('2')).toBeInTheDocument()
   expect(screen.getByText('3')).toBeInTheDocument()
 })
