@@ -1,5 +1,6 @@
 import { TriangleAlert, Check } from 'lucide-react'
 import { useWidgetStore } from '@/store/useWidgetStore'
+import { Button } from '@/components/ui/button'
 import type { HitlPayload } from '@/types'
 
 export function HitlCard({ messageId, payload }: { messageId: string; payload: HitlPayload }) {
@@ -20,14 +21,14 @@ export function HitlCard({ messageId, payload }: { messageId: string; payload: H
       </div>
       <div className="my-2.5 text-[12.5px] text-muted-foreground">{payload.text}</div>
       <div className="flex gap-2">
-        <button type="button" onClick={() => approveHitl(messageId)}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-[9px] bg-status-done py-2 text-[12.5px] font-semibold text-white">
+        <Button onClick={() => approveHitl(messageId)}
+          className="flex h-auto flex-1 items-center justify-center gap-1.5 rounded-[9px] bg-status-done py-2 text-[12.5px] font-semibold text-white hover:bg-status-done/90">
           <Check className="h-[15px] w-[15px]" /> Duyệt &amp; gửi
-        </button>
-        <button type="button" onClick={() => openTask(payload.targetTaskId)}
-          className="flex-1 rounded-[9px] border border-border bg-background/60 py-2 text-[12.5px] font-semibold text-muted-foreground">
+        </Button>
+        <Button variant="outline" onClick={() => openTask(payload.targetTaskId)}
+          className="h-auto flex-1 rounded-[9px] py-2 text-[12.5px] font-semibold">
           Xem chi tiết
-        </button>
+        </Button>
       </div>
     </div>
   )

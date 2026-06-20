@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowLeft, Bot, FileText, Lightbulb, ChevronDown, Activity, CircleCheck, MessageSquare } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useWidgetStore } from '@/store/useWidgetStore'
+import { Button } from '@/components/ui/button'
 import { StatusBadge } from '../shared/StatusBadge'
 import { MessageBubble } from '../shared/MessageBubble'
 import { Composer } from '../chat/Composer'
@@ -25,9 +26,9 @@ export function TaskDetailPanel() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <div className="flex flex-shrink-0 items-center gap-2.5 border-b border-border/60 px-3 py-3">
-        <button type="button" onClick={closeTask} title="Quay lại" className="flex h-8 w-8 items-center justify-center rounded-[9px] text-muted-foreground hover:bg-muted">
+        <Button size="icon" variant="ghost" onClick={closeTask} title="Quay lại">
           <ArrowLeft className="h-[19px] w-[19px]" />
-        </button>
+        </Button>
         <div className="min-w-0 flex-1">
           <div className="truncate text-[14px] font-bold leading-tight">{task.name}</div>
           <div className="mt-0.5 flex items-center gap-1 text-[11.5px] text-muted-foreground"><Bot className="h-[13px] w-[13px]" />{task.by}</div>
@@ -38,11 +39,11 @@ export function TaskDetailPanel() {
       <div className="flex-1 overflow-y-auto scrollbar-thin px-3.5 pb-1.5 pt-3.5">
         {/* collapsible info cluster */}
         <div className="mb-4 overflow-hidden rounded-[14px] border border-border">
-          <button type="button" onClick={() => setInfoCollapsed((v) => !v)}
-            className="flex w-full items-center gap-2 bg-muted/40 px-3 py-2.5 text-[12.5px] font-semibold text-muted-foreground">
+          <Button variant="ghost" onClick={() => setInfoCollapsed((v) => !v)}
+            className="flex h-auto w-full items-center justify-start gap-2 rounded-none bg-muted/40 px-3 py-2.5 text-[12.5px] font-semibold text-muted-foreground hover:bg-muted/60">
             <FileText className="h-4 w-4" /> Thông tin công việc
             <ChevronDown className={cn('ml-auto h-4 w-4 transition-transform', infoCollapsed && '-rotate-90')} />
-          </button>
+          </Button>
           {!infoCollapsed && (
             <div className="flex flex-col">
               <div className="border-t border-border p-3">

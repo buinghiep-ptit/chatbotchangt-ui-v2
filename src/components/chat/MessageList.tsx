@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Copy, ThumbsUp, ThumbsDown } from 'lucide-react'
 import { useWidgetStore } from '@/store/useWidgetStore'
+import { Button } from '@/components/ui/button'
 import { MessageBubble } from '../shared/MessageBubble'
 import { TaskInlineCard } from './TaskInlineCard'
 import { HitlCard } from './HitlCard'
@@ -22,9 +23,9 @@ export function MessageList() {
             {m.showTools && (
               <div className="mt-1 flex gap-0.5">
                 {[Copy, ThumbsUp, ThumbsDown].map((Icon, i) => (
-                  <button key={i} type="button" className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:bg-muted">
+                  <Button key={i} size="icon" variant="ghost" className="h-6 w-6">
                     <Icon className="h-[15px] w-[15px]" />
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}

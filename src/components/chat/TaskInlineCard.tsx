@@ -1,5 +1,6 @@
 import { Route, ArrowRight } from 'lucide-react'
 import { useWidgetStore } from '@/store/useWidgetStore'
+import { Button } from '@/components/ui/button'
 import type { TaskInlinePayload } from '@/types'
 
 export function TaskInlineCard({ payload }: { payload: TaskInlinePayload }) {
@@ -15,10 +16,10 @@ export function TaskInlineCard({ payload }: { payload: TaskInlinePayload }) {
           <div className="mt-0.5 text-[11.5px] text-muted-foreground">{payload.meta}</div>
         </div>
       </div>
-      <button type="button" onClick={() => openTask(payload.targetTaskId)}
-        className="flex w-full items-center justify-between border-t border-border px-3 py-2.5 text-[12.5px] font-semibold text-primary hover:bg-primary/10">
+      <Button variant="ghost" onClick={() => openTask(payload.targetTaskId)}
+        className="flex h-auto w-full items-center justify-between rounded-t-none border-t border-border px-3 py-2.5 text-[12.5px] font-semibold text-primary hover:bg-primary/10">
         <span>Mở trong Công việc</span><ArrowRight className="h-[15px] w-[15px]" />
-      </button>
+      </Button>
     </div>
   )
 }

@@ -1,5 +1,7 @@
 import { Bot, History, Minus, Moon, SquarePen } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { useWidgetStore } from '@/store/useWidgetStore'
+import { Button } from '@/components/ui/button'
 
 export function Header() {
   const { activeTab, newChat, toggleHistory, cycleTheme, setMinimized } = useWidgetStore()
@@ -31,9 +33,9 @@ export function Header() {
 
 function HeaderButton({ children, onClick, title, className = '' }: { children: React.ReactNode; onClick: () => void; title: string; className?: string }) {
   return (
-    <button type="button" title={title} onClick={onClick}
-      className={`flex h-8 w-8 items-center justify-center rounded-[9px] text-white/90 transition-colors hover:bg-white/15 hover:text-white ${className}`}>
+    <Button size="icon" variant="ghost" title={title} onClick={onClick}
+      className={cn('text-white/90 hover:bg-white/15 hover:text-white', className)}>
       {children}
-    </button>
+    </Button>
   )
 }
