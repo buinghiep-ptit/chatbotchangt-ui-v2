@@ -1,10 +1,10 @@
-import { Bot, History, Minus, Moon, SquarePen } from 'lucide-react'
+import { Bot, Minus, Moon, SquarePen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useWidgetStore } from '@/store/useWidgetStore'
 import { Button } from '@/components/ui/button'
 
 export function Header() {
-  const { activeTab, newChat, toggleHistory, cycleTheme, setMinimized } = useWidgetStore()
+  const { activeTab, newChat, cycleTheme, setMinimized } = useWidgetStore()
   const chatOnly = activeTab === 'chat'
   return (
     <div className="flex flex-shrink-0 items-center gap-3 px-4 py-3.5 text-white"
@@ -19,10 +19,7 @@ export function Header() {
       </div>
       <div className="flex gap-0.5">
         {chatOnly && (
-          <>
-            <HeaderButton title="Trò chuyện mới" onClick={newChat}><SquarePen /></HeaderButton>
-            <HeaderButton title="Lịch sử trò chuyện" onClick={() => toggleHistory(true)}><History /></HeaderButton>
-          </>
+          <HeaderButton title="Trò chuyện mới" onClick={newChat}><SquarePen /></HeaderButton>
         )}
         <HeaderButton title="Đổi giao diện" onClick={cycleTheme}><Moon /></HeaderButton>
         <HeaderButton title="Thu nhỏ" className="max-[480px]:hidden" onClick={() => setMinimized(true)}><Minus /></HeaderButton>
