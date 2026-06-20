@@ -3,14 +3,17 @@ import { useWidgetStore } from '@/store/useWidgetStore'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Header } from './Header'
 import { TabBar } from './TabBar'
+import { BottomSheet } from './BottomSheet'
 import { ChatPanel } from './chat/ChatPanel'
+import { HistorySheetContent } from './chat/HistorySheetContent'
+import { QuickSheetContent } from './chat/QuickSheetContent'
 import { TasksPanel } from './tasks/TasksPanel'
 import { TaskDetailPanel } from './tasks/TaskDetailPanel'
 import { NotificationsPanel } from './noti/NotificationsPanel'
 import type { Tab } from '@/types'
 
 export function ChangWidget() {
-  const { minimized, activeTab, currentTaskId, switchTab } = useWidgetStore()
+  const { minimized, activeTab, currentTaskId, switchTab, sheetTab, closeSheet } = useWidgetStore()
   return (
     <div
       className={cn(
@@ -29,15 +32,32 @@ export function ChangWidget() {
         onValueChange={(v) => switchTab(v as Tab)}
         className="relative flex flex-1 flex-col overflow-hidden"
       >
-        <TabsContent value="chat" className="m-0 flex-1 overflow-hidden">
-          <ChatPanel />
-        </TabsContent>
-        <TabsContent value="tasks" className="m-0 flex-1 overflow-hidden">
-          {currentTaskId ? <TaskDetailPanel /> : <TasksPanel />}
-        </TabsContent>
-        <TabsContent value="noti" className="m-0 flex-1 overflow-hidden">
-          <NotificationsPanel />
-        </TabsContent>
+        <div className="relative flex-1 overflow-hidden">
+          <TabsContent value="chat" className="m-0 h-full overflow-hidden">
+            <ChatPanel />
+          </TabsContent>
+          <TabsContent value="tasks" className="m-0 h-full overflow-hidden">
+            {currentTaskId ? <TaskDetailPanel /> : <TasksPanel />}
+          </TabsContent>
+          <TabsContent value="noti" className="m-0 h-full overflow-hidden">
+            <NotificationsPanel />
+          </TabsContent>
+
+          {sheetTab && (
+            <div
+              onClick={closeSheet}
+              className="absolute inset-0 z-10 bg-black/30 transition-opacity"
+            />
+          )}
+
+          <BottomSheet open={sheetTab === 'history'}>
+            <HistorySheetContent />
+          </BottomSheet>
+          <BottomSheet open={sheetTab === 'quick'}>
+            <QuickSheetContent />
+          </BottomSheet>
+        </div>
+
         <TabBar />
       </Tabs>
     </div>
