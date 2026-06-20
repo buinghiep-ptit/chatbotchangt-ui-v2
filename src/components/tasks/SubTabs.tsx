@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils'
 import { useWidgetStore } from '@/store/useWidgetStore'
+import { Button } from '@/components/ui/button'
 import { SEED_TASKS } from '@/data/tasks'
 import type { TaskFilter } from '@/types'
 
@@ -16,11 +17,15 @@ export function SubTabs() {
   return (
     <div className="flex flex-shrink-0 gap-1 overflow-x-auto border-b border-border/60 px-3 py-2.5 [&::-webkit-scrollbar]:hidden">
       {SUBTABS.map(({ id, label }) => (
-        <button key={id} type="button" onClick={() => setTaskFilter(id)}
-          className={cn('whitespace-nowrap rounded-full px-3 py-1.5 text-[12.5px] font-semibold',
-            taskFilter === id ? 'bg-primary/15 text-primary' : 'text-muted-foreground')}>
+        <Button key={id} variant="ghost" onClick={() => setTaskFilter(id)}
+          className={cn(
+            'h-auto whitespace-nowrap rounded-full px-3 py-1.5 text-[12.5px] font-semibold',
+            taskFilter === id
+              ? 'bg-primary/15 text-primary hover:bg-primary/15 hover:text-primary'
+              : 'text-muted-foreground',
+          )}>
           {label}<span className="ml-1 opacity-70">{count(id)}</span>
-        </button>
+        </Button>
       ))}
     </div>
   )
