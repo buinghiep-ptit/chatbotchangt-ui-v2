@@ -24,7 +24,7 @@ export function MessageList() {
               <div className="mt-1 flex gap-0.5">
                 {[Copy, ThumbsUp, ThumbsDown].map((Icon, i) => (
                   <Button key={i} size="icon" variant="ghost" className="h-6 w-6">
-                    <Icon className="h-[15px] w-[15px]" />
+                    <Icon />
                   </Button>
                 ))}
               </div>

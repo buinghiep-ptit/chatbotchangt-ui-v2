@@ -20,17 +20,17 @@ export function HistoryDrawer() {
     <div className={cn('glass absolute inset-0 z-20 flex flex-col transition-transform duration-200', historyOpen ? 'translate-x-0' : 'translate-x-full')}>
       <div className="flex flex-shrink-0 items-center gap-2.5 border-b border-border/60 px-3.5 py-3">
         <Button size="icon" variant="ghost" onClick={() => toggleHistory(false)}>
-          <ArrowLeft className="h-[19px] w-[19px]" />
+          <ArrowLeft />
         </Button>
         <div className="flex-1 text-[15px] font-bold">Lịch sử hội thoại</div>
         <Button size="icon" variant="ghost" onClick={newChat}>
-          <SquarePen className="h-[19px] w-[19px]" />
+          <SquarePen />
         </Button>
       </div>
       <div className="mx-3.5 mb-1 mt-3 flex items-center gap-2 rounded-[10px] border border-border bg-muted/60 px-2.5 py-2">
         <Search className="h-[17px] w-[17px] text-muted-foreground" />
         <Input
-          className="h-auto flex-1 border-0 bg-transparent px-0 py-0 text-[13px] shadow-none focus-visible:ring-0"
+          className="h-auto flex-1 border-0 bg-transparent px-0 py-0 rounded-none text-[13px] shadow-none focus-visible:ring-0"
           placeholder="Tìm trong hội thoại…"
         />
       </div>

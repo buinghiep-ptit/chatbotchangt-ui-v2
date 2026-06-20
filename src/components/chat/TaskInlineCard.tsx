@@ -18,7 +18,7 @@ export function TaskInlineCard({ payload }: { payload: TaskInlinePayload }) {
       </div>
       <Button variant="ghost" onClick={() => openTask(payload.targetTaskId)}
         className="flex h-auto w-full items-center justify-between rounded-t-none border-t border-border px-3 py-2.5 text-[12.5px] font-semibold text-primary hover:bg-primary/10">
-        <span>Mở trong Công việc</span><ArrowRight className="h-[15px] w-[15px]" />
+        <span>Mở trong Công việc</span><ArrowRight />
       </Button>
     </div>
   )

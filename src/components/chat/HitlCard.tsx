@@ -23,10 +23,10 @@ export function HitlCard({ messageId, payload }: { messageId: string; payload: H
       <div className="flex gap-2">
         <Button onClick={() => approveHitl(messageId)}
           className="flex h-auto flex-1 items-center justify-center gap-1.5 rounded-[9px] bg-status-done py-2 text-[12.5px] font-semibold text-white hover:bg-status-done/90">
-          <Check className="h-[15px] w-[15px]" /> Duyệt &amp; gửi
+          <Check /> Duyệt &amp; gửi
         </Button>
         <Button variant="outline" onClick={() => openTask(payload.targetTaskId)}
-          className="h-auto flex-1 rounded-[9px] py-2 text-[12.5px] font-semibold">
+          className="h-auto flex-1 rounded-[9px] py-2 text-[12.5px] font-semibold text-muted-foreground">
           Xem chi tiết
         </Button>
       </div>

@@ -20,12 +20,12 @@ export function Header() {
       <div className="flex gap-0.5">
         {chatOnly && (
           <>
-            <HeaderButton title="Trò chuyện mới" onClick={newChat}><SquarePen className="h-[18px] w-[18px]" /></HeaderButton>
-            <HeaderButton title="Lịch sử trò chuyện" onClick={() => toggleHistory(true)}><History className="h-[18px] w-[18px]" /></HeaderButton>
+            <HeaderButton title="Trò chuyện mới" onClick={newChat}><SquarePen /></HeaderButton>
+            <HeaderButton title="Lịch sử trò chuyện" onClick={() => toggleHistory(true)}><History /></HeaderButton>
           </>
         )}
-        <HeaderButton title="Đổi giao diện" onClick={cycleTheme}><Moon className="h-[18px] w-[18px]" /></HeaderButton>
-        <HeaderButton title="Thu nhỏ" className="max-[480px]:hidden" onClick={() => setMinimized(true)}><Minus className="h-[18px] w-[18px]" /></HeaderButton>
+        <HeaderButton title="Đổi giao diện" onClick={cycleTheme}><Moon /></HeaderButton>
+        <HeaderButton title="Thu nhỏ" className="max-[480px]:hidden" onClick={() => setMinimized(true)}><Minus /></HeaderButton>
       </div>
     </div>
   )

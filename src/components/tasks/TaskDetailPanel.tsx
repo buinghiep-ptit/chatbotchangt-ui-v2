@@ -27,7 +27,7 @@ export function TaskDetailPanel() {
     <div className="flex h-full flex-col overflow-hidden">
       <div className="flex flex-shrink-0 items-center gap-2.5 border-b border-border/60 px-3 py-3">
         <Button size="icon" variant="ghost" onClick={closeTask} title="Quay lại">
-          <ArrowLeft className="h-[19px] w-[19px]" />
+          <ArrowLeft />
         </Button>
         <div className="min-w-0 flex-1">
           <div className="truncate text-[14px] font-bold leading-tight">{task.name}</div>
@@ -41,8 +41,8 @@ export function TaskDetailPanel() {
         <div className="mb-4 overflow-hidden rounded-[14px] border border-border">
           <Button variant="ghost" onClick={() => setInfoCollapsed((v) => !v)}
             className="flex h-auto w-full items-center justify-start gap-2 rounded-none bg-muted/40 px-3 py-2.5 text-[12.5px] font-semibold text-muted-foreground hover:bg-muted/60">
-            <FileText className="h-4 w-4" /> Thông tin công việc
-            <ChevronDown className={cn('ml-auto h-4 w-4 transition-transform', infoCollapsed && '-rotate-90')} />
+            <FileText /> Thông tin công việc
+            <ChevronDown className={cn('ml-auto transition-transform', infoCollapsed && '-rotate-90')} />
           </Button>
           {!infoCollapsed && (
             <div className="flex flex-col">
