@@ -18,7 +18,7 @@ export function TabBar() {
   }
 
   return (
-    <TabsList className="flex h-auto rounded-none border-t border-border/60 bg-card px-1 py-1 pb-[calc(0.25rem+env(safe-area-inset-bottom))]">
+    <TabsList className="flex h-auto shrink-0 rounded-none border-t border-border/60 bg-card px-1 py-1 pb-[calc(0.25rem+env(safe-area-inset-bottom))]">
       {TABS.map(({ id, label, Icon }) => {
         const count = badge[id]
         return (
