@@ -1,3 +1,4 @@
+import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, expect, it } from 'vitest'
@@ -6,15 +7,23 @@ import { Tabs } from '@/components/ui/tabs'
 import { useWidgetStore } from '@/store/useWidgetStore'
 import type { Tab } from '@/types'
 
-function renderTabBar(activeTab: Tab = 'chat') {
-  return render(
+function TabBarWrapper({ initialActiveTab = 'chat' }: { initialActiveTab?: Tab }) {
+  const [activeTab, setActiveTab] = React.useState(initialActiveTab)
+  return (
     <Tabs
       value={activeTab}
-      onValueChange={(v) => useWidgetStore.getState().switchTab(v as Tab)}
+      onValueChange={(v) => {
+        setActiveTab(v as Tab)
+        useWidgetStore.getState().switchTab(v as Tab)
+      }}
     >
       <TabBar />
-    </Tabs>,
+    </Tabs>
   )
+}
+
+function renderTabBar(activeTab: Tab = 'chat') {
+  return render(<TabBarWrapper initialActiveTab={activeTab} />)
 }
 
 beforeEach(() => useWidgetStore.getState().__resetForTest())
