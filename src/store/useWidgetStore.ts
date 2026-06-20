@@ -9,8 +9,7 @@ interface WidgetState {
   currentTaskId: string | null
   minimized: boolean
   taskFilter: TaskFilter
-  historyOpen: boolean
-  quickCollapsed: boolean
+  sheetTab: 'history' | 'quick' | null
 
   messages: Message[]
   isTyping: boolean
@@ -24,8 +23,7 @@ interface WidgetState {
   openTask: (id: string) => void
   closeTask: () => void
   setTaskFilter: (f: TaskFilter) => void
-  toggleHistory: (open?: boolean) => void
-  toggleQuick: () => void
+  closeSheet: () => void
   setMinimized: (m: boolean) => void
 
   // selectors
@@ -63,8 +61,7 @@ const initialState = () => ({
   currentTaskId: null as string | null,
   minimized: false,
   taskFilter: 'pending' as TaskFilter,
-  historyOpen: false,
-  quickCollapsed: false,
+  sheetTab: null as 'history' | 'quick' | null,
   messages: SEED_MESSAGES.map((m) => ({ ...m })),
   isTyping: false,
   tasks: SEED_TASKS,
@@ -90,16 +87,25 @@ export function loadInitialTheme(): Theme {
 export const useWidgetStore = create<WidgetState>((set, get) => ({
   ...initialState(),
 
-  switchTab: (tab) => set({ activeTab: tab, currentTaskId: null, historyOpen: false }),
+  switchTab: (tab) => {
+    if (tab === 'history' || tab === 'quick') {
+      const alreadyOpen = get().sheetTab === tab
+      if (alreadyOpen) {
+        set({ sheetTab: null, activeTab: 'chat' })
+      } else {
+        set({ sheetTab: tab })
+      }
+      return
+    }
+    set({ activeTab: tab, sheetTab: null, currentTaskId: null })
+  },
   openTask: (id) => {
     if (!get().tasks.some((t) => t.id === id)) return
     set({ currentTaskId: id, activeTab: 'tasks' })
   },
   closeTask: () => set({ currentTaskId: null }),
   setTaskFilter: (f) => set({ taskFilter: f }),
-  toggleHistory: (open) =>
-    set((s) => ({ historyOpen: open === undefined ? !s.historyOpen : open })),
-  toggleQuick: () => set((s) => ({ quickCollapsed: !s.quickCollapsed })),
+  closeSheet: () => set({ sheetTab: null, activeTab: 'chat' }),
   setMinimized: (m) => set({ minimized: m }),
 
   pendingTaskCount: () => get().tasks.filter((t) => t.bucket.includes('pending')).length,
@@ -132,8 +138,7 @@ export const useWidgetStore = create<WidgetState>((set, get) => ({
     set({
       activeTab: 'chat',
       currentTaskId: null,
-      historyOpen: false,
-      quickCollapsed: false,
+      sheetTab: null,
       isTyping: false,
       messages: [{ id: nextId(), role: 'bot', time: nowTime(), kind: 'text', html: GREETING_HTML }],
     }),

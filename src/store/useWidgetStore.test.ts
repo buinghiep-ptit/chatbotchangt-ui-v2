@@ -36,6 +36,46 @@ describe('navigation', () => {
     expect(useWidgetStore.getState().currentTaskId).toBeNull()
   })
 
+  it('starts with sheetTab null', () => {
+    expect(useWidgetStore.getState().sheetTab).toBeNull()
+  })
+
+  it('switchTab history opens sheet without changing activeTab', () => {
+    useWidgetStore.getState().switchTab('history')
+    const s = useWidgetStore.getState()
+    expect(s.sheetTab).toBe('history')
+    expect(s.activeTab).toBe('chat')
+  })
+
+  it('switchTab history twice closes sheet and goes back to chat', () => {
+    useWidgetStore.getState().switchTab('history')
+    useWidgetStore.getState().switchTab('history')
+    const s = useWidgetStore.getState()
+    expect(s.sheetTab).toBeNull()
+    expect(s.activeTab).toBe('chat')
+  })
+
+  it('switchTab quick opens quick sheet', () => {
+    useWidgetStore.getState().switchTab('quick')
+    expect(useWidgetStore.getState().sheetTab).toBe('quick')
+  })
+
+  it('switchTab noti while sheet open closes sheet and switches tab', () => {
+    useWidgetStore.getState().switchTab('history')
+    useWidgetStore.getState().switchTab('noti')
+    const s = useWidgetStore.getState()
+    expect(s.sheetTab).toBeNull()
+    expect(s.activeTab).toBe('noti')
+  })
+
+  it('closeSheet sets sheetTab null and activeTab to chat', () => {
+    useWidgetStore.getState().switchTab('history')
+    useWidgetStore.getState().closeSheet()
+    const s = useWidgetStore.getState()
+    expect(s.sheetTab).toBeNull()
+    expect(s.activeTab).toBe('chat')
+  })
+
   it('pendingTaskCount counts tasks in the pending bucket', () => {
     expect(useWidgetStore.getState().pendingTaskCount()).toBe(2)
   })
@@ -75,14 +115,13 @@ describe('chat', () => {
     expect(s.messages.at(-1)?.role).toBe('bot')
   })
 
-  it('newChat resets the thread to a single greeting and reopens suggestions', () => {
+  it('newChat resets the thread to a single greeting and closes sheet', () => {
     useWidgetStore.getState().sendChatMessage('Xin chào')
     useWidgetStore.getState().newChat()
     const s = useWidgetStore.getState()
     expect(s.messages).toHaveLength(1)
     expect(s.messages[0]).toMatchObject({ role: 'bot', kind: 'text' })
-    expect(s.quickCollapsed).toBe(false)
-    expect(s.historyOpen).toBe(false)
+    expect(s.sheetTab).toBeNull()
     expect(s.activeTab).toBe('chat')
   })
 
