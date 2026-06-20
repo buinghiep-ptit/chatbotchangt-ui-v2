@@ -15,6 +15,14 @@
     --border: 240 6% 90%;              /* #E4E4E7 */
     --input: 240 6% 90%;
     --ring: 262 83% 58%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 10%;
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 6% 10%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 6% 10%;
     --radius: 0.9rem;
 
     --status-pending: 32 94% 44%;      /* amber #D97706 */
@@ -26,16 +34,9 @@
     --header-grad-a: 262 83% 58%;
     --header-grad-b: 263 70% 50%;      /* #6D28D9 */
 
-    /* glass (light) */
-    --glass-bg: 255 255 255 / 0.55;
-    --glass-border: 255 255 255 / 0.65;
-    --glass-blur: 18px;
-    --glass-shadow: 0 12px 40px rgba(80, 40, 160, 0.16);
-    --sheen: linear-gradient(135deg, rgba(255,255,255,0.5), rgba(255,255,255,0) 40%);
+    --widget-shadow: 0 8px 32px rgba(80, 40, 160, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
     /* host backdrop */
-    --stage-grad: radial-gradient(900px 600px at 80% -8%, rgba(124,58,237,0.30), transparent 60%),
-                  radial-gradient(700px 500px at 5% 110%, rgba(37,99,235,0.22), transparent 60%),
-                  linear-gradient(160deg, #f4f0ff, #eef2ff 60%, #faf5ff);
+    --stage-grad: linear-gradient(135deg, #f8f6ff 0%, #f0f4ff 50%, #faf5ff 100%);
   }
 
   .dark {
@@ -50,19 +51,21 @@
     --border: 240 5% 22%;              /* #34343A */
     --input: 240 5% 22%;
     --ring: 262 83% 62%;
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 0 0% 98%;
+    --accent: 240 4% 16%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --popover: 240 4% 16%;
+    --popover-foreground: 0 0% 98%;
 
     --bubble-bot-text: 0 0% 96%;
     --header-grad-a: 263 70% 50%;
     --header-grad-b: 258 70% 42%;
 
-    --glass-bg: 30 30 36 / 0.55;
-    --glass-border: 255 255 255 / 0.10;
-    --glass-blur: 20px;
-    --glass-shadow: 0 14px 44px rgba(0, 0, 0, 0.5);
-    --sheen: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0) 40%);
-    --stage-grad: radial-gradient(900px 600px at 80% -8%, rgba(124,58,237,0.28), transparent 60%),
-                  radial-gradient(700px 500px at 5% 110%, rgba(37,99,235,0.18), transparent 60%),
-                  linear-gradient(160deg, #16131f, #131625 60%, #1a1430);
+    --widget-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.25);
+    --stage-grad: linear-gradient(135deg, #16131f 0%, #131625 50%, #1a1430 100%);
   }
 
   * { -webkit-tap-highlight-color: transparent; }
@@ -75,25 +78,6 @@
   }
 }
 
-@layer components {
-  /* medium-intensity liquid glass surface */
-  .glass {
-    background: rgb(var(--glass-bg));
-    backdrop-filter: blur(var(--glass-blur)) saturate(160%) brightness(1.04);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%) brightness(1.04);
-    border: 1px solid rgb(var(--glass-border));
-    box-shadow: var(--glass-shadow);
-  }
-  /* specular sheen overlay; put on a relatively-positioned element */
-  .glass-sheen { position: relative; }
-  .glass-sheen::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: var(--sheen);
-    pointer-events: none;
-    border-radius: inherit;
-  }
-}
 
 @layer utilities {
   .scrollbar-thin::-webkit-scrollbar { width: 6px; }
