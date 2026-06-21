@@ -10,7 +10,7 @@ export function TaskCard({ task }: { task: Task }) {
   const typeTone = task.type === 'workflow' ? 'bg-status-running/10 text-status-running' : 'bg-primary/10 text-primary'
   return (
     <Button variant="ghost" onClick={() => openTask(task.id)}
-      className="h-auto w-full rounded-[14px] border border-border bg-muted/50 p-3 text-left transition-colors hover:bg-muted">
+      className="h-auto w-full flex-col items-start justify-start whitespace-normal rounded-[14px] border border-border bg-muted/50 p-3 text-left transition-colors hover:bg-muted">
       <div className="flex items-start gap-2.5">
         <div className={`flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-[10px] ${typeTone}`}>
           <TypeIcon className="h-[18px] w-[18px]" />

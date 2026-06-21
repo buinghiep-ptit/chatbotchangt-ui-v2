@@ -17,7 +17,7 @@ export function NotificationItem({ noti }: { noti: Notification }) {
   const Icon = ICONS[noti.icon] ?? BellRing
   return (
     <Button variant="ghost" onClick={() => markNotiRead(noti.id)}
-      className="relative flex h-auto w-full items-start justify-start gap-2.5 rounded-none border-b border-border/60 px-4 py-3 text-left hover:bg-muted">
+      className="relative flex h-auto w-full whitespace-normal items-start justify-start gap-2.5 rounded-none border-b border-border/60 px-4 py-3 text-left hover:bg-muted">
       {noti.unread && <span className="absolute left-1.5 top-[18px] h-[7px] w-[7px] rounded-full bg-primary" />}
       <div className={cn('flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[10px]', TONE[noti.kind])}>
         <Icon className="h-[18px] w-[18px]" />

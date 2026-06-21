@@ -50,11 +50,9 @@ export function ChangWidget() {
             />
           )}
 
-          <BottomSheet open={sheetTab === 'history'}>
-            <HistorySheetContent />
-          </BottomSheet>
-          <BottomSheet open={sheetTab === 'quick'}>
-            <QuickSheetContent />
+          <BottomSheet open={!!sheetTab}>
+            {sheetTab === 'history' && <HistorySheetContent />}
+            {sheetTab === 'quick' && <QuickSheetContent />}
           </BottomSheet>
         </div>
 
