@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useWidgetStore } from '@/store/useWidgetStore'
 import { TasksPanel } from './TasksPanel'
@@ -16,9 +16,15 @@ export function TasksView() {
   const hasTask = !!currentTaskId
 
   // direction: 1 when pushing into a detail, -1 when popping back, 0 otherwise.
-  const prevHadTask = useRef(hasTask)
-  const direction = hasTask && !prevHadTask.current ? 1 : !hasTask && prevHadTask.current ? -1 : 0
-  prevHadTask.current = hasTask
+  // Previous value + derived direction held in state (React's "adjust state when
+  // a prop changes" pattern) — lint-clean and StrictMode-safe, unlike a ref read
+  // and written during render.
+  const [prevHadTask, setPrevHadTask] = useState(hasTask)
+  const [direction, setDirection] = useState(0)
+  if (prevHadTask !== hasTask) {
+    setDirection(hasTask ? 1 : -1)
+    setPrevHadTask(hasTask)
+  }
 
   return (
     <div className="relative h-full overflow-hidden">

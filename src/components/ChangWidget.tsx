@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { cn } from '@/lib/utils'
 import { useWidgetStore } from '@/store/useWidgetStore'
@@ -18,11 +18,17 @@ export function ChangWidget() {
   const { minimized, activeTab, currentTaskId, switchTab, sheetTab, closeSheet } = useWidgetStore()
   const view = (currentTaskId ? 'tasks' : activeTab) as 'chat' | 'tasks' | 'noti'
 
-  // Direction of travel for the slide, based on tab order. Updated each render.
+  // Direction of travel for the slide, based on tab order. Derived by comparing
+  // the new index with the previous one held in state — React's "adjust state
+  // when a prop changes" pattern. Lint-clean and correct under StrictMode/
+  // concurrent rendering (reading/writing a ref during render is neither).
   const nextIndex = TAB_ORDER.indexOf(view)
-  const prevIndexRef = useRef(nextIndex)
-  const direction = getDirection(prevIndexRef.current, nextIndex)
-  prevIndexRef.current = nextIndex
+  const [prevIndex, setPrevIndex] = useState(nextIndex)
+  const [direction, setDirection] = useState(0)
+  if (prevIndex !== nextIndex) {
+    setDirection(getDirection(prevIndex, nextIndex))
+    setPrevIndex(nextIndex)
+  }
 
   return (
     <div
