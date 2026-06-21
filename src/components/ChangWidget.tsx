@@ -9,8 +9,7 @@ import { BottomSheet } from './BottomSheet'
 import { ChatPanel } from './chat/ChatPanel'
 import { HistorySheetContent } from './chat/HistorySheetContent'
 import { QuickSheetContent } from './chat/QuickSheetContent'
-import { TasksPanel } from './tasks/TasksPanel'
-import { TaskDetailPanel } from './tasks/TaskDetailPanel'
+import { TasksView } from './tasks/TasksView'
 import { NotificationsPanel } from './noti/NotificationsPanel'
 import { TAB_ORDER, getDirection, tabPanelVariants, SPRING } from '@/lib/motion'
 import type { Tab } from '@/types'
@@ -57,7 +56,7 @@ export function ChangWidget() {
               className="absolute inset-0 h-full overflow-hidden"
             >
               {view === 'chat' && <ChatPanel />}
-              {view === 'tasks' && (currentTaskId ? <TaskDetailPanel /> : <TasksPanel />)}
+              {view === 'tasks' && <TasksView />}
               {view === 'noti' && <NotificationsPanel />}
             </motion.div>
           </AnimatePresence>
