@@ -1,7 +1,8 @@
+import { useRef } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { cn } from '@/lib/utils'
 import { useWidgetStore } from '@/store/useWidgetStore'
-import { Tabs, TabsContent } from '@/components/ui/tabs'
+import { Tabs } from '@/components/ui/tabs'
 import { Header } from './Header'
 import { TabBar } from './TabBar'
 import { BottomSheet } from './BottomSheet'
@@ -11,10 +12,19 @@ import { QuickSheetContent } from './chat/QuickSheetContent'
 import { TasksPanel } from './tasks/TasksPanel'
 import { TaskDetailPanel } from './tasks/TaskDetailPanel'
 import { NotificationsPanel } from './noti/NotificationsPanel'
+import { TAB_ORDER, getDirection, tabPanelVariants, SPRING } from '@/lib/motion'
 import type { Tab } from '@/types'
 
 export function ChangWidget() {
   const { minimized, activeTab, currentTaskId, switchTab, sheetTab, closeSheet } = useWidgetStore()
+  const view = (currentTaskId ? 'tasks' : activeTab) as 'chat' | 'tasks' | 'noti'
+
+  // Direction of travel for the slide, based on tab order. Updated each render.
+  const nextIndex = TAB_ORDER.indexOf(view)
+  const prevIndexRef = useRef(nextIndex)
+  const direction = getDirection(prevIndexRef.current, nextIndex)
+  prevIndexRef.current = nextIndex
+
   return (
     <div
       className={cn(
@@ -29,21 +39,28 @@ export function ChangWidget() {
     >
       <Header />
       <Tabs
-        value={currentTaskId ? 'tasks' : activeTab}
+        value={view}
         onValueChange={(v) => switchTab(v as Tab)}
         activationMode="manual"
         className="relative flex flex-1 flex-col overflow-hidden"
       >
         <div className="relative flex-1 overflow-hidden">
-          <TabsContent value="chat" className="m-0 h-full overflow-hidden">
-            <ChatPanel />
-          </TabsContent>
-          <TabsContent value="tasks" className="m-0 h-full overflow-hidden">
-            {currentTaskId ? <TaskDetailPanel /> : <TasksPanel />}
-          </TabsContent>
-          <TabsContent value="noti" className="m-0 h-full overflow-hidden">
-            <NotificationsPanel />
-          </TabsContent>
+          <AnimatePresence custom={direction} initial={false}>
+            <motion.div
+              key={view}
+              custom={direction}
+              variants={tabPanelVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={SPRING}
+              className="absolute inset-0 h-full overflow-hidden"
+            >
+              {view === 'chat' && <ChatPanel />}
+              {view === 'tasks' && (currentTaskId ? <TaskDetailPanel /> : <TasksPanel />)}
+              {view === 'noti' && <NotificationsPanel />}
+            </motion.div>
+          </AnimatePresence>
 
           <AnimatePresence>
             {sheetTab && (
