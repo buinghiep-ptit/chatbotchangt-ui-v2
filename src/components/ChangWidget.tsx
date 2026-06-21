@@ -29,7 +29,7 @@ export function ChangWidget() {
       className={cn(
         'fixed bottom-6 right-6 z-10 flex h-[680px] w-[408px] flex-col overflow-hidden rounded-[20px]',
         'bg-card border border-border',
-        'transition-all duration-200',
+        'transition-all duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)]',
         minimized && 'pointer-events-none translate-y-5 scale-95 opacity-0',
         'max-[480px]:inset-0 max-[480px]:h-full max-[480px]:w-full max-[480px]:rounded-none',
         'max-[480px]:!translate-y-0 max-[480px]:!scale-100 max-[480px]:!opacity-100 max-[480px]:!pointer-events-auto',
