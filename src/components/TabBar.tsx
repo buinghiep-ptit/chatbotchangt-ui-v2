@@ -13,7 +13,7 @@ const TABS: { id: Tab; label: string; Icon: typeof Bell }[] = [
 ]
 
 export function TabBar() {
-  const { pendingTaskCount, unreadNotiCount, sheetTab } = useWidgetStore()
+  const { pendingTaskCount, unreadNotiCount, sheetTab, switchTab } = useWidgetStore()
   const badge: Partial<Record<Tab, number>> = {
     tasks: pendingTaskCount(),
     noti: unreadNotiCount(),
@@ -24,10 +24,16 @@ export function TabBar() {
       {TABS.map(({ id, label, Icon }) => {
         const count = badge[id]
         const sheetActive = sheetTab === id
+        const isSheetTab = id === 'history' || id === 'quick'
         return (
           <TabsTrigger
             key={id}
             value={id}
+            // Real tabs: also handle onClick so clicking the already-active background
+            // tab (parked at 'chat' while a sheet is open) still closes the sheet —
+            // Radix fires onValueChange only on a value *change*. Sheet tabs rely solely
+            // on onValueChange (single fire via activationMode="manual") to keep their toggle.
+            onClick={isSheetTab ? undefined : () => switchTab(id)}
             className={cn(
               'relative flex flex-1 flex-col items-center gap-0.5 rounded-xl px-1 py-1.5',
               'font-semibold text-muted-foreground',

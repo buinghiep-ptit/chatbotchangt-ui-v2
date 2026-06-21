@@ -30,6 +30,7 @@ export function ChangWidget() {
       <Tabs
         value={currentTaskId ? 'tasks' : activeTab}
         onValueChange={(v) => switchTab(v as Tab)}
+        activationMode="manual"
         className="relative flex flex-1 flex-col overflow-hidden"
       >
         <div className="relative flex-1 overflow-hidden">
@@ -44,16 +45,17 @@ export function ChangWidget() {
           </TabsContent>
 
           {sheetTab && (
-            <div
-              onClick={closeSheet}
-              className="absolute inset-0 z-10 bg-black/30 transition-opacity"
-            />
+            <>
+              <div
+                onClick={closeSheet}
+                className="absolute inset-0 z-10 bg-black/30 transition-opacity"
+              />
+              <BottomSheet>
+                {sheetTab === 'history' && <HistorySheetContent />}
+                {sheetTab === 'quick' && <QuickSheetContent />}
+              </BottomSheet>
+            </>
           )}
-
-          <BottomSheet open={!!sheetTab}>
-            {sheetTab === 'history' && <HistorySheetContent />}
-            {sheetTab === 'quick' && <QuickSheetContent />}
-          </BottomSheet>
         </div>
 
         <TabBar />

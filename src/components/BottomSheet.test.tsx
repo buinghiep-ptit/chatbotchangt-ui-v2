@@ -2,12 +2,15 @@ import { render, screen } from '@testing-library/react'
 import { expect, it } from 'vitest'
 import { BottomSheet } from './BottomSheet'
 
-it('is visually hidden when open=false', () => {
-  render(<BottomSheet open={false}><div>content</div></BottomSheet>)
-  expect(screen.getByText('content').closest('[class*="translate"]')).toHaveClass('translate-y-full')
+it('renders its children', () => {
+  render(<BottomSheet><div>content</div></BottomSheet>)
+  expect(screen.getByText('content')).toBeInTheDocument()
 })
 
-it('is visible when open=true', () => {
-  render(<BottomSheet open={true}><div>content</div></BottomSheet>)
-  expect(screen.getByText('content').closest('[class*="translate"]')).toHaveClass('translate-y-0')
+it('slides in from the bottom on mount', () => {
+  render(<BottomSheet><div>content</div></BottomSheet>)
+  expect(screen.getByText('content').closest('[class*="slide-in"]')).toHaveClass(
+    'animate-in',
+    'slide-in-from-bottom-[100%]',
+  )
 })
