@@ -1,4 +1,6 @@
+import { motion } from 'motion/react'
 import { useWidgetStore } from '@/store/useWidgetStore'
+import { listContainer, listItem } from '@/lib/motion'
 import { SubTabs } from './SubTabs'
 import { TaskCard } from './TaskCard'
 import { EmptyState } from './EmptyState'
@@ -17,9 +19,20 @@ export function TasksPanel() {
         {filtered.length === 0 ? (
           <EmptyState />
         ) : (
-          <div className="flex flex-col gap-2.5 p-3">
-            {filtered.map((t) => <TaskCard key={t.id} task={t} />)}
-          </div>
+          <motion.div
+            // Re-key on the filter so switching sub-tabs replays the stagger.
+            key={taskFilter}
+            variants={listContainer}
+            initial="hidden"
+            animate="show"
+            className="flex flex-col gap-2.5 p-3"
+          >
+            {filtered.map((t) => (
+              <motion.div key={t.id} variants={listItem}>
+                <TaskCard task={t} />
+              </motion.div>
+            ))}
+          </motion.div>
         )}
       </div>
     </div>

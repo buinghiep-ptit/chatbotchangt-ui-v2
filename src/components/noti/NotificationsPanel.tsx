@@ -1,5 +1,7 @@
+import { motion } from 'motion/react'
 import { useWidgetStore } from '@/store/useWidgetStore'
 import { Button } from '@/components/ui/button'
+import { listContainer, listItem } from '@/lib/motion'
 import { NotificationItem } from './NotificationItem'
 
 export function NotificationsPanel() {
@@ -12,9 +14,18 @@ export function NotificationsPanel() {
           Đánh dấu đã đọc
         </Button>
       </div>
-      <div className="flex-1 overflow-y-auto scrollbar-thin pb-3">
-        {notifications.map((n) => <NotificationItem key={n.id} noti={n} />)}
-      </div>
+      <motion.div
+        variants={listContainer}
+        initial="hidden"
+        animate="show"
+        className="flex-1 overflow-y-auto scrollbar-thin pb-3"
+      >
+        {notifications.map((n) => (
+          <motion.div key={n.id} variants={listItem}>
+            <NotificationItem noti={n} />
+          </motion.div>
+        ))}
+      </motion.div>
     </div>
   )
 }
