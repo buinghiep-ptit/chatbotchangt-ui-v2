@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'motion/react'
 import { cn } from '@/lib/utils'
 import { useWidgetStore } from '@/store/useWidgetStore'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
@@ -44,18 +45,27 @@ export function ChangWidget() {
             <NotificationsPanel />
           </TabsContent>
 
-          {sheetTab && (
-            <>
-              <div
+          <AnimatePresence>
+            {sheetTab && (
+              <motion.div
+                key="sheet-backdrop"
                 onClick={closeSheet}
-                className="absolute inset-0 z-10 bg-black/30 transition-opacity"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="absolute inset-0 z-10 bg-black/30"
               />
-              <BottomSheet>
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {sheetTab && (
+              <BottomSheet key="sheet" onDismiss={closeSheet}>
                 {sheetTab === 'history' && <HistorySheetContent />}
                 {sheetTab === 'quick' && <QuickSheetContent />}
               </BottomSheet>
-            </>
-          )}
+            )}
+          </AnimatePresence>
         </div>
 
         <TabBar />
