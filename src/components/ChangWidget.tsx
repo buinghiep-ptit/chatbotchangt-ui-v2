@@ -14,6 +14,13 @@ import { NotificationsPanel } from './noti/NotificationsPanel'
 import { TAB_ORDER, getDirection, tabPanelVariants, SPRING } from '@/lib/motion'
 import type { Tab } from '@/types'
 
+// Accessible names for the animated tab panels — reuse the TabBar's visible labels.
+const PANEL_LABELS: Record<'chat' | 'tasks' | 'noti', string> = {
+  chat: 'Trò chuyện',
+  tasks: 'Công việc',
+  noti: 'Thông báo',
+}
+
 export function ChangWidget() {
   const { minimized, activeTab, currentTaskId, switchTab, sheetTab, closeSheet } = useWidgetStore()
   const view = (currentTaskId ? 'tasks' : activeTab) as 'chat' | 'tasks' | 'noti'
@@ -60,6 +67,8 @@ export function ChangWidget() {
               exit="exit"
               transition={SPRING}
               className="absolute inset-0 h-full overflow-hidden"
+              role="tabpanel"
+              aria-label={PANEL_LABELS[view]}
             >
               {view === 'chat' && <ChatPanel />}
               {view === 'tasks' && <TasksView />}
