@@ -52,7 +52,7 @@ export function TabBar() {
               <motion.div
                 layoutId="tab-indicator"
                 transition={SOFT_SPRING}
-                className="absolute inset-1 -z-0 rounded-xl bg-primary/10"
+                className="absolute inset-1 -z-10 rounded-xl bg-primary/10"
               />
             )}
             <motion.span whileTap={{ scale: 0.85 }} className="relative z-10 inline-flex">
