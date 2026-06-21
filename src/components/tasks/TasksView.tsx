@@ -37,7 +37,10 @@ export function TasksView() {
           animate="center"
           exit="exit"
           transition={SPRING}
-          className="absolute inset-0 h-full"
+          // Opaque background so the incoming panel fully occludes the outgoing
+          // one during the push/pop — otherwise the widget's bg-card shows
+          // through the transparent panel and the list appears to flicker.
+          className="absolute inset-0 h-full bg-card"
         >
           {currentTaskId ? <TaskDetailPanel /> : <TasksPanel />}
         </motion.div>
