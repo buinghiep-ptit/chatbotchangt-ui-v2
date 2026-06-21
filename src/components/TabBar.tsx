@@ -31,7 +31,9 @@ export function TabBar() {
             className={cn(
               'relative flex flex-1 flex-col items-center gap-0.5 rounded-xl px-1 py-1.5',
               'font-semibold text-muted-foreground',
-              'data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none',
+              'data-[state=active]:bg-transparent data-[state=active]:shadow-none',
+              !sheetTab && 'data-[state=active]:text-primary',
+              sheetTab && !sheetActive && 'data-[state=active]:text-muted-foreground',
               sheetActive && 'text-primary',
             )}
           >

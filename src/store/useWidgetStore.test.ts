@@ -40,11 +40,20 @@ describe('navigation', () => {
     expect(useWidgetStore.getState().sheetTab).toBeNull()
   })
 
-  it('switchTab history opens sheet without changing activeTab', () => {
+  it('switchTab history opens sheet and always switches to chat', () => {
     useWidgetStore.getState().switchTab('history')
     const s = useWidgetStore.getState()
     expect(s.sheetTab).toBe('history')
     expect(s.activeTab).toBe('chat')
+  })
+
+  it('switchTab history from tasks always switches background to chat', () => {
+    useWidgetStore.getState().switchTab('tasks')
+    useWidgetStore.getState().switchTab('history')
+    const s = useWidgetStore.getState()
+    expect(s.sheetTab).toBe('history')
+    expect(s.activeTab).toBe('chat')
+    expect(s.currentTaskId).toBeNull()
   })
 
   it('switchTab history twice closes sheet and goes back to chat', () => {

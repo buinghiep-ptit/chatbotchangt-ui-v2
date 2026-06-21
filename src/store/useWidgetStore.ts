@@ -93,7 +93,7 @@ export const useWidgetStore = create<WidgetState>((set, get) => ({
       if (alreadyOpen) {
         set({ sheetTab: null, activeTab: 'chat' })
       } else {
-        set({ sheetTab: tab })
+        set({ sheetTab: tab, activeTab: 'chat', currentTaskId: null })
       }
       return
     }
