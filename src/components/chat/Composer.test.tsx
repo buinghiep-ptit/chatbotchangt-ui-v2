@@ -82,3 +82,59 @@ describe('Composer voice input', () => {
     expect(screen.getByTitle('Trình duyệt không hỗ trợ ghi âm')).toBeDisabled()
   })
 })
+
+describe('Composer attachments', () => {
+  function fileInput(container: HTMLElement): HTMLInputElement {
+    return container.querySelector('input[type="file"]') as HTMLInputElement
+  }
+
+  it('opens the file picker when the paperclip is clicked', async () => {
+    const user = userEvent.setup()
+    const clickSpy = vi.spyOn(HTMLInputElement.prototype, 'click')
+    render(<Composer placeholder="Nhắn…" onSend={vi.fn()} />)
+    await user.click(screen.getByTitle('Đính kèm'))
+    expect(clickSpy).toHaveBeenCalled()
+    clickSpy.mockRestore()
+  })
+
+  it('shows a chip when a file is added and removes it on ✕', async () => {
+    const user = userEvent.setup()
+    const { container } = render(<Composer placeholder="Nhắn…" onSend={vi.fn()} />)
+    const file = new File(['x'], 'doc.pdf', { type: 'application/pdf' })
+    await user.upload(fileInput(container), file)
+    expect(await screen.findByText('doc.pdf')).toBeInTheDocument()
+    await user.click(screen.getByLabelText('Xoá doc.pdf'))
+    expect(screen.queryByText('doc.pdf')).not.toBeInTheDocument()
+  })
+
+  it('sends text and files together, then clears', async () => {
+    const user = userEvent.setup()
+    const onSend = vi.fn()
+    const { container } = render(<Composer placeholder="Nhắn…" onSend={onSend} />)
+    await user.type(screen.getByRole('textbox'), 'kèm tệp')
+    const file = new File(['x'], 'doc.pdf', { type: 'application/pdf' })
+    await user.upload(fileInput(container), file)
+    await screen.findByText('doc.pdf')
+    await user.click(screen.getByTitle('Gửi'))
+    expect(onSend).toHaveBeenCalledTimes(1)
+    const [text, files] = onSend.mock.calls[0]
+    expect(text).toBe('kèm tệp')
+    expect(files).toHaveLength(1)
+    expect(files[0].name).toBe('doc.pdf')
+    expect(screen.getByRole('textbox')).toHaveValue('')
+    expect(screen.queryByText('doc.pdf')).not.toBeInTheDocument()
+  })
+
+  it('sends with files even when the text is empty', async () => {
+    const user = userEvent.setup()
+    const onSend = vi.fn()
+    const { container } = render(<Composer placeholder="Nhắn…" onSend={onSend} />)
+    const file = new File(['x'], 'doc.pdf', { type: 'application/pdf' })
+    await user.upload(fileInput(container), file)
+    await screen.findByText('doc.pdf')
+    await user.click(screen.getByTitle('Gửi'))
+    const [text, files] = onSend.mock.calls[0]
+    expect(text).toBe('')
+    expect(files).toHaveLength(1)
+  })
+})
