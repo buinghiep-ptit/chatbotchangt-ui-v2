@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 
 export function Header() {
   const { activeTab, newChat, cycleTheme } = useWidgetStore()
-  const { isAllowExpandBot } = readWidgetParams()
+  const { isAllowExpandBot, tenantId } = readWidgetParams()
   const chatOnly = activeTab === 'chat'
   const [maximized, setMaximized] = useState(false)
 
@@ -28,7 +28,9 @@ export function Header() {
       </div>
       <div className="min-w-0 flex-1">
         <div className="text-[15px] font-bold leading-tight">Chang SCC</div>
-        <div className="flex items-center gap-1.5 text-[11.5px] opacity-80">Nhân sự số · Sẵn sàng</div>
+        <div className="flex items-center gap-1.5 text-[11.5px] opacity-80">
+          Nhân sự số · Sẵn sàng{tenantId ? ` · ${tenantId}` : ''}
+        </div>
       </div>
       <div className="flex gap-0.5">
         {chatOnly && (
