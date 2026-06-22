@@ -22,6 +22,12 @@ describe('useFileAttachments', () => {
     expect(result.current.files).toHaveLength(1)
   })
 
+  it('dedupes duplicate filenames within a single addFiles call', () => {
+    const { result } = renderHook(() => useFileAttachments())
+    act(() => result.current.addFiles([f('a.png'), f('a.png')]))
+    expect(result.current.files).toHaveLength(1)
+  })
+
   it('drops files over the size cap and warns', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     const { result } = renderHook(() => useFileAttachments())
@@ -37,6 +43,7 @@ describe('useFileAttachments', () => {
     const many = Array.from({ length: MAX_FILES + 3 }, (_, i) => f(`f${i}.png`))
     act(() => result.current.addFiles(many))
     expect(result.current.files).toHaveLength(MAX_FILES)
+    expect(warn).toHaveBeenCalled()
     warn.mockRestore()
   })
 
