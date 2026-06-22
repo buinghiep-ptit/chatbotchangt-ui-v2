@@ -8,13 +8,17 @@ import { useWidgetStore } from '@/store/useWidgetStore'
 import type { Tab } from '@/types'
 
 function TabBarWrapper({ initialActiveTab = 'chat' }: { initialActiveTab?: Tab }) {
+  // Mirror ChangWidget: Tabs value is always the real panel tab (chat/tasks/noti),
+  // never a sheet tab. Sheet tabs toggle via onValueChange from that base value.
+  const PANEL_TABS = new Set(['chat', 'tasks', 'noti'])
   const [activeTab, setActiveTab] = React.useState(initialActiveTab)
   return (
     <Tabs
       value={activeTab}
+      activationMode="manual"
       onValueChange={(v) => {
-        setActiveTab(v as Tab)
         useWidgetStore.getState().switchTab(v as Tab)
+        if (PANEL_TABS.has(v)) setActiveTab(v as Tab)
       }}
     >
       <TabBar />
@@ -40,20 +44,22 @@ it('shows the pending task badge (2) and unread noti badge (3)', () => {
   expect(screen.getByText('3')).toBeInTheDocument()
 })
 
-it('renders 5 tabs including Lịch sử and Gợi ý', () => {
+it('renders 4 tabs including Thêm', () => {
   renderTabBar()
-  expect(screen.getByText('Lịch sử')).toBeInTheDocument()
-  expect(screen.getByText('Gợi ý')).toBeInTheDocument()
+  expect(screen.getByText('Thêm')).toBeInTheDocument()
+  expect(screen.queryByText('Lịch sử')).not.toBeInTheDocument()
+  expect(screen.queryByText('Gợi ý')).not.toBeInTheDocument()
 })
 
-it('clicking Lịch sử opens the history sheet', async () => {
+it('clicking Thêm opens the more sheet', async () => {
   renderTabBar()
-  await userEvent.click(screen.getByText('Lịch sử'))
-  expect(useWidgetStore.getState().sheetTab).toBe('history')
+  await userEvent.click(screen.getByText('Thêm'))
+  expect(useWidgetStore.getState().sheetTab).toBe('more')
 })
 
-it('clicking Gợi ý opens the quick sheet', async () => {
+it('clicking Thêm again closes the more sheet', async () => {
   renderTabBar()
-  await userEvent.click(screen.getByText('Gợi ý'))
-  expect(useWidgetStore.getState().sheetTab).toBe('quick')
+  await userEvent.click(screen.getByText('Thêm'))
+  await userEvent.click(screen.getByText('Thêm'))
+  expect(useWidgetStore.getState().sheetTab).toBeNull()
 })

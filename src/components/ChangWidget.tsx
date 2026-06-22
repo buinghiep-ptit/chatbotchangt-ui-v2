@@ -9,6 +9,7 @@ import { BottomSheet } from './BottomSheet'
 import { ChatPanel } from './chat/ChatPanel'
 import { HistorySheetContent } from './chat/HistorySheetContent'
 import { QuickSheetContent } from './chat/QuickSheetContent'
+import { MoreSheetContent } from './chat/MoreSheetContent'
 import { TasksView } from './tasks/TasksView'
 import { NotificationsPanel } from './noti/NotificationsPanel'
 import { TAB_ORDER, getDirection, tabPanelVariants, SPRING } from '@/lib/motion'
@@ -89,6 +90,7 @@ export function ChangWidget() {
               <BottomSheet key="sheet" onDismiss={closeSheet}>
                 {sheetTab === 'history' && <HistorySheetContent />}
                 {sheetTab === 'quick' && <QuickSheetContent />}
+                {sheetTab === 'more' && <MoreSheetContent />}
               </BottomSheet>
             )}
           </AnimatePresence>

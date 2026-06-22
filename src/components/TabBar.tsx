@@ -1,4 +1,4 @@
-import { MessageCircle, ListChecks, Bell, History, Zap } from 'lucide-react'
+import { MessageCircle, ListChecks, Bell, MoreHorizontal } from 'lucide-react'
 import { motion } from 'motion/react'
 import { cn } from '@/lib/utils'
 import { useWidgetStore } from '@/store/useWidgetStore'
@@ -10,8 +10,7 @@ const TABS: { id: Tab; label: string; Icon: typeof Bell }[] = [
   { id: 'chat', label: 'Trò chuyện', Icon: MessageCircle },
   { id: 'tasks', label: 'Công việc', Icon: ListChecks },
   { id: 'noti', label: 'Thông báo', Icon: Bell },
-  { id: 'history', label: 'Lịch sử', Icon: History },
-  { id: 'quick', label: 'Gợi ý', Icon: Zap },
+  { id: 'more', label: 'Thêm', Icon: MoreHorizontal },
 ]
 
 export function TabBar() {
@@ -28,7 +27,7 @@ export function TabBar() {
       {TABS.map(({ id, label, Icon }) => {
         const count = badge[id]
         const sheetActive = sheetTab === id
-        const isSheetTab = id === 'history' || id === 'quick'
+        const isSheetTab = id === 'history' || id === 'quick' || id === 'more'
         const isActive = activeId === id
         return (
           <TabsTrigger

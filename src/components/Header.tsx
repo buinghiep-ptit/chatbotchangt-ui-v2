@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Bot, Maximize2, Minimize2, Moon, SquarePen, X } from 'lucide-react'
+import { Bot, Maximize2, Minimize2, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useWidgetStore } from '@/store/useWidgetStore'
 import { hostBridge } from '@/lib/hostBridge'
@@ -7,9 +7,8 @@ import { readWidgetParams } from '@/lib/surface'
 import { Button } from '@/components/ui/button'
 
 export function Header() {
-  const { activeTab, newChat, cycleTheme } = useWidgetStore()
+  const { activeTab: _activeTab } = useWidgetStore()
   const { isAllowExpandBot } = readWidgetParams()
-  const chatOnly = activeTab === 'chat'
   const [maximized, setMaximized] = useState(false)
 
   const toggleMaximize = () => {
@@ -33,10 +32,6 @@ export function Header() {
         </div>
       </div>
       <div className="flex gap-0.5">
-        {chatOnly && (
-          <HeaderButton title="Trò chuyện mới" onClick={newChat}><SquarePen /></HeaderButton>
-        )}
-        <HeaderButton title="Đổi giao diện" onClick={cycleTheme}><Moon /></HeaderButton>
         {isAllowExpandBot && (
           <HeaderButton title={maximized ? 'Thu nhỏ' : 'Phóng to'} onClick={toggleMaximize}>
             {maximized ? <Minimize2 /> : <Maximize2 />}
