@@ -69,6 +69,9 @@
   }
 
   * { -webkit-tap-highlight-color: transparent; }
+  /* The widget fills its iframe: the host sizes the frame, the surfaces use
+     h-full, so the document chain must establish 100% height for it to resolve. */
+  html, body, #root { height: 100%; }
   body {
     @apply text-foreground;
     font-family: 'Noto Sans', system-ui, sans-serif;
