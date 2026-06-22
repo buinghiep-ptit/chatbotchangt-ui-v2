@@ -10,6 +10,7 @@ import { ChatPanel } from './chat/ChatPanel'
 import { HistorySheetContent } from './chat/HistorySheetContent'
 import { QuickSheetContent } from './chat/QuickSheetContent'
 import { MoreSheetContent } from './chat/MoreSheetContent'
+import { BrickSheetContent } from './chat/BrickSheetContent'
 import { TasksView } from './tasks/TasksView'
 import { NotificationsPanel } from './noti/NotificationsPanel'
 import { TAB_ORDER, getDirection, tabPanelVariants, SPRING } from '@/lib/motion'
@@ -23,7 +24,7 @@ const PANEL_LABELS: Record<'chat' | 'tasks' | 'noti', string> = {
 }
 
 export function ChangWidget() {
-  const { activeTab, currentTaskId, switchTab, sheetTab, closeSheet } = useWidgetStore()
+  const { activeTab, currentTaskId, switchTab, sheetTab, closeSheet, brickSheetOpen, closeBrickSheet } = useWidgetStore()
   const view = (currentTaskId ? 'tasks' : activeTab) as 'chat' | 'tasks' | 'noti'
 
   // Tell the host this chat frame has loaded so it can reveal the bubble.
@@ -91,6 +92,27 @@ export function ChangWidget() {
                 {sheetTab === 'history' && <HistorySheetContent />}
                 {sheetTab === 'quick' && <QuickSheetContent />}
                 {sheetTab === 'more' && <MoreSheetContent />}
+              </BottomSheet>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {brickSheetOpen && (
+              <motion.div
+                key="brick-backdrop"
+                onClick={closeBrickSheet}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="absolute inset-0 z-10 bg-black/30"
+              />
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {brickSheetOpen && (
+              <BottomSheet key="brick-sheet" onDismiss={closeBrickSheet}>
+                <BrickSheetContent />
               </BottomSheet>
             )}
           </AnimatePresence>

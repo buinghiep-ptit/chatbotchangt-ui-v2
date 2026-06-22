@@ -9,6 +9,7 @@ interface WidgetState {
   currentTaskId: string | null
   taskFilter: TaskFilter
   sheetTab: 'history' | 'quick' | 'more' | null
+  brickSheetOpen: boolean
 
   messages: Message[]
   isTyping: boolean
@@ -23,6 +24,8 @@ interface WidgetState {
   closeTask: () => void
   setTaskFilter: (f: TaskFilter) => void
   closeSheet: () => void
+  openBrickSheet: () => void
+  closeBrickSheet: () => void
 
   // selectors
   pendingTaskCount: () => number
@@ -59,6 +62,7 @@ const initialState = () => ({
   currentTaskId: null as string | null,
   taskFilter: 'pending' as TaskFilter,
   sheetTab: null as 'history' | 'quick' | 'more' | null,
+  brickSheetOpen: false,
   messages: SEED_MESSAGES.map((m) => ({ ...m })),
   isTyping: false,
   tasks: SEED_TASKS,
@@ -103,6 +107,8 @@ export const useWidgetStore = create<WidgetState>((set, get) => ({
   closeTask: () => set({ currentTaskId: null }),
   setTaskFilter: (f) => set({ taskFilter: f }),
   closeSheet: () => set({ sheetTab: null, activeTab: 'chat' }),
+  openBrickSheet: () => set({ brickSheetOpen: true }),
+  closeBrickSheet: () => set({ brickSheetOpen: false }),
 
   pendingTaskCount: () => get().tasks.filter((t) => t.bucket.includes('pending')).length,
   unreadNotiCount: () => get().notifications.filter((n) => n.unread).length,
