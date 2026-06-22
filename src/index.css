@@ -82,4 +82,13 @@
 @layer utilities {
   .scrollbar-thin::-webkit-scrollbar { width: 6px; }
   .scrollbar-thin::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 6px; }
+
+  @keyframes wave {
+    0%, 100% { transform: scaleY(0.35); }
+    50% { transform: scaleY(1); }
+  }
+  .animate-wave {
+    transform-origin: center;
+    animation: wave 0.8s ease-in-out infinite;
+  }
 }
