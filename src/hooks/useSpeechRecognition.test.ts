@@ -87,4 +87,74 @@ describe('useSpeechRecognition', () => {
     expect(result.current.transcript).toBe('giữ lại')
     expect(result.current.isListening).toBe(false)
   })
+
+  describe('auto-restart behavior', () => {
+    beforeEach(() => {
+      vi.useFakeTimers()
+    })
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    it('fires rec.start() again after onend while still listening', () => {
+      const { result } = renderHook(() => useSpeechRecognition())
+      act(() => result.current.start())
+      const rec = lastInstance()
+      expect(rec.start).toHaveBeenCalledTimes(1)
+      act(() => rec.onend!())
+      act(() => vi.advanceTimersByTime(100))
+      expect(rec.start).toHaveBeenCalledTimes(2)
+    })
+
+    it('does NOT restart after cancel() + onend', () => {
+      const { result } = renderHook(() => useSpeechRecognition())
+      act(() => result.current.start())
+      const rec = lastInstance()
+      act(() => result.current.cancel())
+      act(() => rec.onend!())
+      act(() => vi.advanceTimersByTime(200))
+      expect(rec.start).toHaveBeenCalledTimes(1)
+    })
+
+    it('does NOT restart after stop() + onend', () => {
+      const { result } = renderHook(() => useSpeechRecognition())
+      act(() => result.current.start())
+      const rec = lastInstance()
+      act(() => result.current.stop())
+      act(() => rec.onend!())
+      act(() => vi.advanceTimersByTime(200))
+      expect(rec.start).toHaveBeenCalledTimes(1)
+    })
+
+    it('sets isListening false on not-allowed error', () => {
+      const { result } = renderHook(() => useSpeechRecognition())
+      act(() => result.current.start())
+      const rec = lastInstance()
+      act(() => rec.onerror!({ error: 'not-allowed' }))
+      expect(result.current.isListening).toBe(false)
+    })
+
+    it('ignores no-speech error — isListening stays true', () => {
+      const { result } = renderHook(() => useSpeechRecognition())
+      act(() => result.current.start())
+      const rec = lastInstance()
+      act(() => rec.onerror!({ error: 'no-speech' }))
+      expect(result.current.isListening).toBe(true)
+    })
+
+    it('unmount calls abort() and does not call start() again even if a timer was pending', () => {
+      const { result, unmount } = renderHook(() => useSpeechRecognition())
+      act(() => result.current.start())
+      const rec = lastInstance()
+      // trigger onend to schedule a pending restart timer
+      act(() => rec.onend!())
+      // unmount before timer fires
+      act(() => unmount())
+      // advance past the timer delay
+      act(() => vi.advanceTimersByTime(200))
+      expect(rec.abort).toHaveBeenCalled()
+      // start was called once during start(); must not be called again
+      expect(rec.start).toHaveBeenCalledTimes(1)
+    })
+  })
 })

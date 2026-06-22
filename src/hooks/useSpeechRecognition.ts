@@ -170,6 +170,7 @@ export function useSpeechRecognition(lang = 'vi-VN'): UseSpeechRecognition {
 
   useEffect(() => {
     return () => {
+      isListeningRef.current = false
       if (restartTimerRef.current) clearTimeout(restartTimerRef.current)
       const rec = recognitionRef.current
       if (rec) {
