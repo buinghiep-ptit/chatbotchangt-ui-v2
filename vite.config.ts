@@ -6,4 +6,6 @@ export default defineConfig({
   base: '/ai-agent/sdk/',
   plugins: [react()],
   resolve: { alias: { '@': path.resolve(__dirname, './src') } },
+  server: { port: 9000 },
+  preview: { port: 9000 },
 })

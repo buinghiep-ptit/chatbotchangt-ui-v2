@@ -1,10 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { motion } from 'motion/react'
-import { Copy, ThumbsUp, ThumbsDown } from 'lucide-react'
 import { useWidgetStore } from '@/store/useWidgetStore'
-import { Button } from '@/components/ui/button'
 import { bubbleVariants } from '@/lib/motion'
 import { MessageBubble } from '../shared/MessageBubble'
+import { MessageActions } from './MessageActions'
 import { TaskInlineCard } from './TaskInlineCard'
 import { HitlCard } from './HitlCard'
 import { TypingIndicator } from './TypingIndicator'
@@ -23,16 +22,10 @@ export function MessageList() {
             <MessageBubble role={m.role} time={m.time} text={m.text} html={m.html} attachments={m.attachments}>
               {m.kind === 'taskInline' && m.taskInline && <TaskInlineCard payload={m.taskInline} />}
               {m.kind === 'hitl' && m.hitl && <HitlCard messageId={m.id} payload={m.hitl} />}
-              {m.showTools && (
-                <div className="mt-1 flex gap-0.5">
-                  {[Copy, ThumbsUp, ThumbsDown].map((Icon, i) => (
-                    <Button key={i} size="icon" variant="ghost" className="h-6 w-6">
-                      <Icon />
-                    </Button>
-                  ))}
-                </div>
-              )}
             </MessageBubble>
+            {m.role === 'bot' && (
+              <MessageActions text={m.text} html={m.html} />
+            )}
           </motion.div>
         ))}
         {isTyping && <TypingIndicator />}

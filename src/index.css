@@ -1,3 +1,4 @@
+@import '@fontsource-variable/geist';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -30,6 +31,7 @@
     --status-done: 142 71% 45%;        /* green #16A34A */
     --status-alert: 0 72% 51%;         /* red   #DC2626 */
 
+    --bubble-bot: 240 5% 96%;          /* #F4F4F5 */
     --bubble-bot-text: 240 6% 10%;
     --header-grad-a: 262 83% 58%;
     --header-grad-b: 263 70% 50%;      /* #6D28D9 */
@@ -56,6 +58,7 @@
     --popover: 240 4% 16%;
     --popover-foreground: 0 0% 98%;
 
+    --bubble-bot: 240 4% 16%;          /* #27272A */
     --bubble-bot-text: 0 0% 96%;
     --header-grad-a: 263 70% 50%;
     --header-grad-b: 258 70% 42%;
@@ -67,7 +70,7 @@
   html, body, #root { height: 100%; }
   body {
     @apply text-foreground;
-    font-family: 'Noto Sans', system-ui, sans-serif;
+    font-family: 'Geist Variable', system-ui, sans-serif;
     font-size: 14px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
@@ -76,6 +79,9 @@
 
 
 @layer utilities {
+  /* Bot/assistant bubble surface — solid fill matching chang-webview.html. */
+  .glass { background: hsl(var(--bubble-bot)); }
+
   .scrollbar-thin::-webkit-scrollbar { width: 6px; }
   .scrollbar-thin::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 6px; }
 
