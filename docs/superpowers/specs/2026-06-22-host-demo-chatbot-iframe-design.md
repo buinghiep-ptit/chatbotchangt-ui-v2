@@ -46,29 +46,38 @@ CSS contract (ported from `chatbot-sdk/style.css`):
 ```
 host-demo/
 ├── .env                    VITE_APP_CHATBOT_URL, VITE_TENANT_ID
-├── index.html
+├── index.html              Contains the vanilla-JS message relay <script>
 ├── src/
 │   ├── main.tsx            React bootstrap
 │   ├── App.tsx             Mock portal page (header + sample content)
 │   ├── config.ts           Reads env → { chatbotUrl, tenantId } constants
-│   ├── ChatbotWidget.tsx   The reusable integration component (two iframes)
-│   ├── useChatbotBridge.ts Hook: the postMessage relay/orchestration
+│   ├── ChatbotWidget.tsx   Renders the two iframes (#chatbot-root structure)
 │   └── chatbot-widget.css  Positioning + animation (ported from style.css)
 └── (vite.config.ts, tsconfig*, package.json)
 ```
 
 ### Units
 
-1. **`ChatbotWidget` + `useChatbotBridge`** — the integration itself.
-   - `ChatbotWidget` renders the bubble iframe and the dialog iframe (both fixed
-     bottom-right via `chatbot-widget.css`), holding a `ref` to each.
-   - `useChatbotBridge(refs, { chatbotUrl })` installs the `message` listener in
-     a `useEffect`, faithfully reproducing the `index.html` relay logic but using
-     refs instead of `document.querySelector`, and removing the listener on
-     unmount. Same message protocol, same origin check, same resize/animation
-     side effects, same relay-to-target behavior.
+1. **`index.html` relay `<script>`** — the chatbot communication, kept as
+   **vanilla JS**, ported verbatim from the CMS `index.html`. It installs the
+   `window` `message` listener that selects the iframes via
+   `document.querySelector('.chatbot-dialog'/'.chatbot-bubble')`, performs the
+   origin check against the chatbot URL, handles `INIT_CHAT` / `TOGGLE_CHAT` /
+   `MAXIMIZE_CHAT` / `MINIMIZE_CHAT` (resize + animation classes), and relays the
+   message to the target frame. The origin/target chatbot URL is injected with
+   Vite's native HTML env replacement — the same `%VITE_APP_CHATBOT_URL%`
+   placeholder the CMS uses, which Vite substitutes at build/serve time. So the
+   script is a verbatim port, including the `event.origin !==
+   '%VITE_APP_CHATBOT_URL%'` check.
+
+2. **`ChatbotWidget`** — a thin React component that renders the DOM structure
+   the relay script depends on: `#chatbot-root` containing `.chatbot-dialog >
+   iframe` (dialog) and `.chatbot-bubble > iframe` (bubble), with the correct
+   `src` URLs. It does **not** own any messaging logic — that lives in
+   `index.html`. The React side only produces the markup + iframe `src`.
    - **Inputs:** `chatbotUrl`, `tenantId` (props). **Depends on:** the widget app
-     being served at `chatbotUrl`. **Output:** a self-contained floating widget.
+     being served at `chatbotUrl`, and the `index.html` relay script. **Output:**
+     the iframe markup.
 
 2. **`App` (mock portal)** — a thin host shell: a top header bar and some
    placeholder dashboard content so the floating widget visibly sits "inside a
@@ -86,12 +95,13 @@ iframe `src` (`?tenant_id=<config.tenantId>…`). No network/auth in the host.
 Cross-frame messaging: widget iframes → host `message` listener (orchestrate +
 relay) → target iframe.
 
-### Implementation choice: relay in React, not inline `index.html`
+### Implementation choice: relay stays vanilla JS in `index.html`
 
-The original keeps the relay as a plain `<script>` in `index.html`. The demo
-moves it into `useChatbotBridge` (a `useEffect`) for clarity and proper cleanup.
-The wire protocol, origin check, and DOM side effects are unchanged — only the
-host of the logic differs (refs vs. `querySelector`).
+The relay is kept exactly where and how the CMS keeps it — a plain `<script>` in
+`index.html` using `document.querySelector` and `%VITE_APP_CHATBOT_URL%`. This
+is a deliberate decision to match the original integration 1:1: no React hook,
+no refs, no `useEffect`. The React side (`ChatbotWidget`) only renders the
+`#chatbot-root` markup that this script queries.
 
 ## Configuration / assumptions
 
@@ -111,8 +121,9 @@ host of the logic differs (refs vs. `querySelector`).
 - No login / JWT / `AuthGuard`, no API calls, no tenant fetching.
 - No React Query, no MUI, no app theme — plain CSS for the mock portal.
 - No draggable behavior beyond the original's fixed positioning.
-- No tests beyond an optional smoke test of the relay/orchestration reducer
-  logic (the only non-trivial unit), if desired during planning.
+- No tests. The relay is a verbatim vanilla-JS port living in `index.html`
+  (driven by the live widget iframes), so there is no isolated React unit worth
+  unit-testing; correctness is verified by running the demo against the widget.
 
 ## Success criteria
 
