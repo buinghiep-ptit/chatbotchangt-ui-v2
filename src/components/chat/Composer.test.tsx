@@ -1,9 +1,10 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Composer } from './Composer'
 
 class MockSpeechRecognition {
+  static instances: MockSpeechRecognition[] = []
   lang = ''
   continuous = false
   interimResults = false
@@ -14,9 +15,22 @@ class MockSpeechRecognition {
   start = vi.fn()
   stop = vi.fn()
   abort = vi.fn()
+  constructor() {
+    MockSpeechRecognition.instances.push(this)
+  }
+}
+
+function resultEvent(items: { transcript: string; isFinal: boolean }[], resultIndex = 0) {
+  const results = items.map((it) => {
+    const alt = [{ transcript: it.transcript }] as unknown as { isFinal: boolean } & Array<{ transcript: string }>
+    alt.isFinal = it.isFinal
+    return alt
+  })
+  return { resultIndex, results }
 }
 
 beforeEach(() => {
+  MockSpeechRecognition.instances = []
   ;(window as unknown as Record<string, unknown>).SpeechRecognition = MockSpeechRecognition
   ;(window as unknown as Record<string, unknown>).webkitSpeechRecognition = MockSpeechRecognition
 })
@@ -43,6 +57,22 @@ describe('Composer voice input', () => {
     await user.click(screen.getByTitle('Nhập bằng giọng nói'))
     await user.click(screen.getByLabelText('Hủy ghi âm'))
     expect(textarea).toHaveValue('đã gõ sẵn')
+    expect(screen.queryByTestId('recording-overlay')).not.toBeInTheDocument()
+  })
+
+  it('confirm keeps transcript text without auto-sending', async () => {
+    const user = userEvent.setup()
+    const onSend = vi.fn()
+    render(<Composer placeholder="Nhắn…" onSend={onSend} />)
+    await user.click(screen.getByTitle('Nhập bằng giọng nói'))
+    const rec = MockSpeechRecognition.instances.at(-1)!
+    await act(async () => {
+      rec.onresult!(resultEvent([{ transcript: 'xin chào', isFinal: true }]))
+    })
+    await user.click(screen.getByLabelText('Lưu ghi âm'))
+    expect(screen.getByRole('textbox')).toHaveValue('xin chào')
+    expect(onSend).not.toHaveBeenCalled()
+    expect(screen.queryByTestId('recording-overlay')).not.toBeInTheDocument()
   })
 
   it('disables the mic button when speech recognition is unsupported', () => {

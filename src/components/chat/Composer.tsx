@@ -44,6 +44,7 @@ export function Composer({ placeholder, onSend }: { placeholder: string; onSend:
           value={displayValue}
           placeholder={placeholder}
           onChange={(e) => {
+            if (speech.isListening) return
             setValue(e.target.value)
             e.target.style.height = 'auto'
             e.target.style.height = `${Math.min(e.target.scrollHeight, 90)}px`
