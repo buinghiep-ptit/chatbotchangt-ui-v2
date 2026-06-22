@@ -1,11 +1,24 @@
-import { Bot, Minus, Moon, SquarePen } from 'lucide-react'
+import { useState } from 'react'
+import { Bot, Maximize2, Minimize2, Moon, SquarePen, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useWidgetStore } from '@/store/useWidgetStore'
+import { hostBridge } from '@/lib/hostBridge'
+import { readWidgetParams } from '@/lib/surface'
 import { Button } from '@/components/ui/button'
 
 export function Header() {
-  const { activeTab, newChat, cycleTheme, setMinimized } = useWidgetStore()
+  const { activeTab, newChat, cycleTheme } = useWidgetStore()
+  const { isAllowExpandBot } = readWidgetParams()
   const chatOnly = activeTab === 'chat'
+  const [maximized, setMaximized] = useState(false)
+
+  const toggleMaximize = () => {
+    const next = !maximized
+    setMaximized(next)
+    if (next) hostBridge.maximize()
+    else hostBridge.minimize()
+  }
+
   return (
     <div className="flex flex-shrink-0 items-center gap-3 px-4 py-3.5 text-white"
          style={{ background: 'linear-gradient(135deg, hsl(var(--header-grad-a)), hsl(var(--header-grad-b)))' }}>
@@ -22,7 +35,12 @@ export function Header() {
           <HeaderButton title="Trò chuyện mới" onClick={newChat}><SquarePen /></HeaderButton>
         )}
         <HeaderButton title="Đổi giao diện" onClick={cycleTheme}><Moon /></HeaderButton>
-        <HeaderButton title="Thu nhỏ" className="max-[480px]:hidden" onClick={() => setMinimized(true)}><Minus /></HeaderButton>
+        {isAllowExpandBot && (
+          <HeaderButton title={maximized ? 'Thu nhỏ' : 'Phóng to'} onClick={toggleMaximize}>
+            {maximized ? <Minimize2 /> : <Maximize2 />}
+          </HeaderButton>
+        )}
+        <HeaderButton title="Đóng" onClick={() => hostBridge.closeChat()}><X /></HeaderButton>
       </div>
     </div>
   )
