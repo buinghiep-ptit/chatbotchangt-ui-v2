@@ -1,10 +1,18 @@
 import { Bot, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { Role } from '@/types'
+import type { Attachment, Role } from '@/types'
+import { FileChips } from '@/components/chat/FileChips'
 
 export function MessageBubble({
-  role, time, text, html, children,
-}: { role: Role; time?: string; text?: string; html?: string; children?: React.ReactNode }) {
+  role, time, text, html, attachments, children,
+}: {
+  role: Role
+  time?: string
+  text?: string
+  html?: string
+  attachments?: Attachment[]
+  children?: React.ReactNode
+}) {
   const isUser = role === 'user'
   return (
     <div className={cn('flex max-w-full gap-2.5', isUser && 'flex-row-reverse')}>
@@ -18,6 +26,9 @@ export function MessageBubble({
           isUser ? 'rounded-br-[4px] bg-primary text-primary-foreground'
                  : 'glass rounded-bl-[4px] text-[hsl(var(--bubble-bot-text))]')}>
           {html ? <span dangerouslySetInnerHTML={{ __html: html }} /> : text}
+          {attachments && attachments.length > 0 && (
+            <FileChips files={attachments.map((a) => a.file)} />
+          )}
           {children}
         </div>
         {time && <div className="px-1 text-[10.5px] text-muted-foreground">{time}</div>}

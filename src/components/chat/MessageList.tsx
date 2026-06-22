@@ -20,7 +20,7 @@ export function MessageList() {
         <div className="text-center text-[11px] text-muted-foreground">Hôm nay · 09:45</div>
         {messages.map((m) => (
           <motion.div key={m.id} variants={bubbleVariants} initial="hidden" animate="show">
-            <MessageBubble role={m.role} time={m.time} text={m.text} html={m.html}>
+            <MessageBubble role={m.role} time={m.time} text={m.text} html={m.html} attachments={m.attachments}>
               {m.kind === 'taskInline' && m.taskInline && <TaskInlineCard payload={m.taskInline} />}
               {m.kind === 'hitl' && m.hitl && <HitlCard messageId={m.id} payload={m.hitl} />}
               {m.showTools && (
