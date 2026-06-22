@@ -1,4 +1,4 @@
-import { render, screen, act } from '@testing-library/react'
+import { render, screen, act, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Composer } from './Composer'
@@ -136,5 +136,17 @@ describe('Composer attachments', () => {
     const [text, files] = onSend.mock.calls[0]
     expect(text).toBe('')
     expect(files).toHaveLength(1)
+  })
+
+  it('ignores pasted images while recording', async () => {
+    const user = userEvent.setup()
+    render(<Composer placeholder="Nhắn…" onSend={vi.fn()} />)
+    await user.click(screen.getByTitle('Nhập bằng giọng nói'))
+    const textarea = screen.getByRole('textbox')
+    const file = new File(['x'], 'pasted.png', { type: 'image/png' })
+    fireEvent.paste(textarea, {
+      clipboardData: { items: [{ kind: 'file', type: 'image/png', getAsFile: () => file }] },
+    })
+    expect(screen.queryByText('pasted.png')).not.toBeInTheDocument()
   })
 })

@@ -148,6 +148,7 @@ describe('chat', () => {
     expect(last?.attachments).toHaveLength(1)
     expect(last?.attachments?.[0]).toMatchObject({ name: 'a.png', type: 'image/png' })
     expect(last?.attachments?.[0].file).toBe(file)
+    expect(last?.attachments?.[0].size).toBe(file.size)
   })
 
   it('allows sending with files and empty text', () => {
