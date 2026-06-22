@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { cn } from '@/lib/utils'
+import { hostBridge } from '@/lib/hostBridge'
 import { useWidgetStore } from '@/store/useWidgetStore'
 import { Tabs } from '@/components/ui/tabs'
 import { Header } from './Header'
@@ -22,8 +22,13 @@ const PANEL_LABELS: Record<'chat' | 'tasks' | 'noti', string> = {
 }
 
 export function ChangWidget() {
-  const { minimized, activeTab, currentTaskId, switchTab, sheetTab, closeSheet } = useWidgetStore()
+  const { activeTab, currentTaskId, switchTab, sheetTab, closeSheet } = useWidgetStore()
   const view = (currentTaskId ? 'tasks' : activeTab) as 'chat' | 'tasks' | 'noti'
+
+  // Tell the host this chat frame has loaded so it can reveal the bubble.
+  useEffect(() => {
+    hostBridge.initChat()
+  }, [])
 
   // Direction of travel for the slide, based on tab order. Derived by comparing
   // the new index with the previous one held in state — React's "adjust state
@@ -38,17 +43,7 @@ export function ChangWidget() {
   }
 
   return (
-    <div
-      className={cn(
-        'fixed bottom-6 right-6 z-10 flex h-[680px] w-[408px] flex-col overflow-hidden rounded-[20px]',
-        'bg-card border border-border',
-        'transition-all duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)]',
-        minimized && 'pointer-events-none translate-y-5 scale-95 opacity-0',
-        'max-[480px]:inset-0 max-[480px]:h-full max-[480px]:w-full max-[480px]:rounded-none',
-        'max-[480px]:!translate-y-0 max-[480px]:!scale-100 max-[480px]:!opacity-100 max-[480px]:!pointer-events-auto',
-      )}
-      style={{ boxShadow: 'var(--widget-shadow)' }}
-    >
+    <div className="flex h-full w-full flex-col overflow-hidden bg-card">
       <Header />
       <Tabs
         value={view}
