@@ -101,7 +101,7 @@ export function Composer({ placeholder, onSend }: { placeholder: string; onSend:
               title="Lưu ghi âm"
               aria-label="Lưu ghi âm"
               onClick={confirmRecording}
-              className="flex-shrink-0 text-emerald-600 hover:text-emerald-600"
+              className="flex-shrink-0 text-[hsl(var(--status-done))] hover:text-[hsl(var(--status-done))]"
             >
               <Check />
             </Button>

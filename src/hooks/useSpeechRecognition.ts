@@ -85,6 +85,8 @@ export function useSpeechRecognition(lang = 'vi-VN'): UseSpeechRecognition {
       if (err === 'not-allowed' || err === 'service-not-allowed') {
         isListeningRef.current = false
         setIsListening(false)
+      } else {
+        console.warn('Speech recognition error:', err)
       }
     }
 
