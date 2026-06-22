@@ -28,10 +28,8 @@ export function BrickSheetContent() {
         className="mb-4 h-28 w-full resize-none rounded-xl border border-input bg-transparent p-3 text-sm outline-none focus:ring-1 focus:ring-ring"
       />
       <div className="flex justify-end gap-2">
-        <Button variant="ghost" size="sm" onClick={handleClose}>Đóng</Button>
-        <Button size="sm" className="bg-red-600 text-white hover:bg-red-700" onClick={handleSubmit}>
-          Gửi
-        </Button>
+        <Button variant="outline" size="sm" onClick={handleClose}>Đóng</Button>
+        <Button variant="destructive" size="sm" onClick={handleSubmit}>Gửi</Button>
       </div>
     </div>
   )
