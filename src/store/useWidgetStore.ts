@@ -7,7 +7,6 @@ import { SEED_MESSAGES, GREETING_HTML } from '@/data/messages'
 interface WidgetState {
   activeTab: Tab
   currentTaskId: string | null
-  minimized: boolean
   taskFilter: TaskFilter
   sheetTab: 'history' | 'quick' | null
 
@@ -24,7 +23,6 @@ interface WidgetState {
   closeTask: () => void
   setTaskFilter: (f: TaskFilter) => void
   closeSheet: () => void
-  setMinimized: (m: boolean) => void
 
   // selectors
   pendingTaskCount: () => number
@@ -59,7 +57,6 @@ const initialConversations = () =>
 const initialState = () => ({
   activeTab: 'chat' as Tab,
   currentTaskId: null as string | null,
-  minimized: false,
   taskFilter: 'pending' as TaskFilter,
   sheetTab: null as 'history' | 'quick' | null,
   messages: SEED_MESSAGES.map((m) => ({ ...m })),
@@ -106,7 +103,6 @@ export const useWidgetStore = create<WidgetState>((set, get) => ({
   closeTask: () => set({ currentTaskId: null }),
   setTaskFilter: (f) => set({ taskFilter: f }),
   closeSheet: () => set({ sheetTab: null, activeTab: 'chat' }),
-  setMinimized: (m) => set({ minimized: m }),
 
   pendingTaskCount: () => get().tasks.filter((t) => t.bucket.includes('pending')).length,
   unreadNotiCount: () => get().notifications.filter((n) => n.unread).length,

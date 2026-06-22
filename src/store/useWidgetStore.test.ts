@@ -6,10 +6,9 @@ const reset = () => useWidgetStore.getState().__resetForTest()
 describe('navigation', () => {
   beforeEach(reset)
 
-  it('starts on the chat tab, not minimized, no detail', () => {
+  it('starts on the chat tab, no detail', () => {
     const s = useWidgetStore.getState()
     expect(s.activeTab).toBe('chat')
-    expect(s.minimized).toBe(false)
     expect(s.currentTaskId).toBeNull()
   })
 
