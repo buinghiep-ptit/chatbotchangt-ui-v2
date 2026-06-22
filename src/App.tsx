@@ -1,12 +1,8 @@
-import { Stage } from './components/Stage'
-import { Launcher } from './components/Launcher'
+import { getSurface } from '@/lib/surface'
+import { Bubble } from './components/Bubble'
 import { ChangWidget } from './components/ChangWidget'
 
 export default function App() {
-  return (
-    <Stage>
-      <ChangWidget />
-      <Launcher />
-    </Stage>
-  )
+  if (getSurface() === 'bubble') return <Bubble />
+  return <ChangWidget />
 }
