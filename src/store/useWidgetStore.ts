@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { Message, Notification, Task, TaskFilter, Tab, Theme } from '@/types'
+import type { Attachment, Message, Notification, Task, TaskFilter, Tab, Theme } from '@/types'
 import { SEED_TASKS } from '@/data/tasks'
 import { SEED_NOTIFICATIONS } from '@/data/notifications'
 import { SEED_MESSAGES, GREETING_HTML } from '@/data/messages'
@@ -32,7 +32,7 @@ interface WidgetState {
   filteredTasks: () => Task[]
 
   // chat (Task 7)
-  sendChatMessage: (text: string) => void
+  sendChatMessage: (text: string, files?: File[]) => void
   newChat: () => void
   approveHitl: (messageId: string) => void
   // task detail (Task 8)
@@ -112,12 +112,19 @@ export const useWidgetStore = create<WidgetState>((set, get) => ({
   unreadNotiCount: () => get().notifications.filter((n) => n.unread).length,
   filteredTasks: () => get().tasks.filter((t) => t.bucket.includes(get().taskFilter)),
 
-  sendChatMessage: (text) => {
+  sendChatMessage: (text, files) => {
     const trimmed = text.trim()
-    if (!trimmed) return
+    const attachments: Attachment[] | undefined =
+      files && files.length > 0
+        ? files.map((f) => ({ name: f.name, type: f.type, size: f.size, file: f }))
+        : undefined
+    if (!trimmed && !attachments) return
     const time = nowTime()
     set((s) => ({
-      messages: [...s.messages, { id: nextId(), role: 'user', time, kind: 'text', text: trimmed }],
+      messages: [
+        ...s.messages,
+        { id: nextId(), role: 'user', time, kind: 'text', text: trimmed, attachments },
+      ],
       isTyping: true,
     }))
     setTimeout(() => {

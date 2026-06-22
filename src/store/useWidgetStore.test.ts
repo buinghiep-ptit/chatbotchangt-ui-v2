@@ -139,6 +139,31 @@ describe('chat', () => {
     const m = useWidgetStore.getState().messages.find((x) => x.id === 'm4')
     expect(m?.hitl?.approved).toBe(true)
   })
+
+  it('sendChatMessage stores attachments on the user message', () => {
+    const file = new File(['x'], 'a.png', { type: 'image/png' })
+    useWidgetStore.getState().sendChatMessage('có tệp', [file])
+    const last = useWidgetStore.getState().messages.at(-1)
+    expect(last).toMatchObject({ role: 'user', text: 'có tệp' })
+    expect(last?.attachments).toHaveLength(1)
+    expect(last?.attachments?.[0]).toMatchObject({ name: 'a.png', type: 'image/png' })
+    expect(last?.attachments?.[0].file).toBe(file)
+  })
+
+  it('allows sending with files and empty text', () => {
+    const before = useWidgetStore.getState().messages.length
+    const file = new File(['x'], 'a.png', { type: 'image/png' })
+    useWidgetStore.getState().sendChatMessage('', [file])
+    const s = useWidgetStore.getState()
+    expect(s.messages.length).toBe(before + 1)
+    expect(s.messages.at(-1)?.attachments).toHaveLength(1)
+  })
+
+  it('is still a no-op with empty text and no files', () => {
+    const before = useWidgetStore.getState().messages.length
+    useWidgetStore.getState().sendChatMessage('   ')
+    expect(useWidgetStore.getState().messages.length).toBe(before)
+  })
 })
 
 describe('task conversation', () => {

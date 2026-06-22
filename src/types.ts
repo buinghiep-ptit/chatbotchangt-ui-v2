@@ -38,6 +38,13 @@ export interface TaskInlinePayload {
   targetTaskId: string
 }
 
+export interface Attachment {
+  name: string
+  type: string
+  size: number
+  file: File
+}
+
 export interface Message {
   id: string
   role: Role
@@ -47,6 +54,8 @@ export interface Message {
   html?: string
   /** plain text content (user-entered; rendered escaped) */
   text?: string
+  /** files attached to a user message (mock — held in memory, never uploaded) */
+  attachments?: Attachment[]
   taskInline?: TaskInlinePayload
   hitl?: HitlPayload
   showTools?: boolean
