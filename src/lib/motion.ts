@@ -46,6 +46,13 @@ export const listItem: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] } },
 }
 
+// Subtle directional slide for sub-tab content (tasks filter switching).
+export const subTabVariants: Variants = {
+  enter: (dir: number) => ({ x: dir > 0 ? '30%' : dir < 0 ? '-30%' : 0, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (dir: number) => ({ x: dir > 0 ? '-30%' : dir < 0 ? '30%' : 0, opacity: 0 }),
+}
+
 // Message-bubble entrance.
 export const bubbleVariants: Variants = {
   hidden: { opacity: 0, y: 10, scale: 0.98 },
