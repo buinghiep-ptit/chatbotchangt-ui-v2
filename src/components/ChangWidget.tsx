@@ -10,6 +10,7 @@ import { ChatPanel } from './chat/ChatPanel'
 import { HistorySheetContent } from './chat/HistorySheetContent'
 import { MoreSheetContent } from './chat/MoreSheetContent'
 import { BrickSheetContent } from './chat/BrickSheetContent'
+import { QuickDetailSheetContent } from './chat/QuickDetailSheetContent'
 import { TasksView } from './tasks/TasksView'
 import { NotificationsPanel } from './noti/NotificationsPanel'
 import { TAB_ORDER, getDirection, tabPanelVariants, SPRING } from '@/lib/motion'
@@ -23,7 +24,7 @@ const PANEL_LABELS: Record<'chat' | 'tasks' | 'noti', string> = {
 }
 
 export function ChangWidget() {
-  const { activeTab, currentTaskId, switchTab, sheetTab, closeSheet, brickSheetOpen, closeBrickSheet } = useWidgetStore()
+  const { activeTab, currentTaskId, switchTab, sheetTab, closeSheet, brickSheetOpen, closeBrickSheet, quickDetailSheet, closeQuickDetailSheet } = useWidgetStore()
   const view = (currentTaskId ? 'tasks' : activeTab) as 'chat' | 'tasks' | 'noti'
 
   // Tell the host this chat frame has loaded so it can reveal the bubble.
@@ -111,6 +112,27 @@ export function ChangWidget() {
             {brickSheetOpen && (
               <BottomSheet key="brick-sheet" onDismiss={closeBrickSheet}>
                 <BrickSheetContent />
+              </BottomSheet>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {quickDetailSheet && (
+              <motion.div
+                key="quick-detail-backdrop"
+                onClick={closeQuickDetailSheet}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="absolute inset-0 z-10 bg-black/30"
+              />
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {quickDetailSheet && (
+              <BottomSheet key="quick-detail-sheet" onDismiss={closeQuickDetailSheet} maxHeight="70%">
+                <QuickDetailSheetContent />
               </BottomSheet>
             )}
           </AnimatePresence>

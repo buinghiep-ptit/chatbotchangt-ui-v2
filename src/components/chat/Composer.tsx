@@ -1,10 +1,18 @@
-import { useRef, useState } from "react";
-import { Plus, Mic, Send, X, Check } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { Plus, Mic, Send, X, Check, Lightbulb, FileText, Search, BellRing, Mail, Tv, Wrench, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { useFileAttachments } from "@/hooks/useFileAttachments";
+import { useWidgetStore } from "@/store/useWidgetStore";
 import { FileChips } from "./FileChips";
+import { Chip } from "../shared/Chip";
+import { QUICK_SUGGESTIONS } from "@/data/messages";
+import { cn } from "@/lib/utils";
+import { composerRef } from "@/lib/composerRef";
+
+const ICONS = { FileText, Search, BellRing, Mail, Tv, Wrench, HelpCircle } as const;
 
 // Fixed, varied bar heights (px) so the waveform is deterministic, not re-randomized per render.
 const WAVE_BARS = [
@@ -26,9 +34,14 @@ export function Composer({
   onSend: (text: string, files?: File[]) => void;
 }) {
   const [value, setValue] = useState("");
+  const [showQuick, setShowQuick] = useState(false);
   const textBeforeRecordRef = useRef("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const speech = useSpeechRecognition();
   const attach = useFileAttachments();
+  const openQuickDetailSheet = useWidgetStore((s) => s.openQuickDetailSheet);
+  const composerFillRequest = useWidgetStore((s) => s.composerFillRequest);
+  const consumeComposerFill = useWidgetStore((s) => s.consumeComposerFill);
 
   const submit = () => {
     const t = value.trim();
@@ -43,6 +56,35 @@ export function Composer({
     ? merge(textBeforeRecordRef.current, speech.transcript)
     : value;
   const canSend = value.trim().length > 0 || attach.files.length > 0;
+
+  const fillInput = (text: string) => {
+    setValue(text);
+    setShowQuick(false);
+    requestAnimationFrame(() => {
+      const el = textareaRef.current;
+      if (!el) return;
+      el.style.height = "auto";
+      el.style.height = `${Math.min(el.scrollHeight, MAX_TEXTAREA_HEIGHT)}px`;
+      el.focus();
+      el.setSelectionRange(el.value.length, el.value.length);
+    });
+  };
+
+  useEffect(() => {
+    composerRef.current = textareaRef.current;
+    requestAnimationFrame(() => textareaRef.current?.focus());
+    return () => { composerRef.current = null; };
+  }, []);
+
+  // Apply a fill request raised by the quick-detail sheet, then clear it so the
+  // same query can be picked again later.
+  useEffect(() => {
+    if (composerFillRequest != null) {
+      fillInput(composerFillRequest);
+      consumeComposerFill();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [composerFillRequest]);
 
   const startRecording = () => {
     textBeforeRecordRef.current = value;
@@ -62,21 +104,50 @@ export function Composer({
     <div className="flex-shrink-0 px-3 pb-2" {...attach.getRootProps()}>
       <input {...attach.getInputProps()} />
       <div className="rounded-[14px] border border-border focus-within:border-primary">
+        <AnimatePresence initial={false}>
+          {showQuick && (
+            <motion.div
+              key="quick"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+              className="overflow-hidden"
+            >
+              <div className="border-b border-border/60 px-3 py-2.5">
+                <div className="mb-2 flex items-center gap-1.5">
+                  <Lightbulb className="h-3 w-3 text-primary" />
+                  <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    Gợi ý nhanh
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {QUICK_SUGGESTIONS.map((suggestion) => {
+                    const Icon = ICONS[suggestion.icon as keyof typeof ICONS];
+                    return (
+                      <Chip
+                        key={suggestion.label}
+                        onClick={() => {
+                          openQuickDetailSheet(suggestion);
+                          setShowQuick(false);
+                        }}
+                      >
+                        <Icon className="h-[15px] w-[15px]" />
+                        {suggestion.label}
+                      </Chip>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         {attach.files.length > 0 && (
           <FileChips files={attach.files} onRemove={attach.removeFile} />
         )}
-        <div className="relative flex items-end gap-1 py-1 px-1.5">
-          <Button
-            type="button"
-            size="icon"
-            variant="ghost"
-            title="Đính kèm"
-            onClick={attach.open}
-            className="flex-shrink-0 hover:bg-foreground/5"
-          >
-            <Plus />
-          </Button>
+        <div className="relative flex flex-col px-2 pt-2">
           <Textarea
+            ref={textareaRef}
             rows={1}
             value={displayValue}
             placeholder={placeholder}
@@ -105,41 +176,68 @@ export function Composer({
                 submit();
               }
             }}
-            className="min-h-0 max-h-[160px] flex-1 resize-none border-0 bg-transparent px-0 py-1.5 text-[13.5px] md:text-[13.5px] shadow-none focus-visible:ring-0"
+            className="min-h-0 max-h-[160px] w-full resize-none border-0 bg-transparent px-0 py-0 text-[13.5px] md:text-[13.5px] shadow-none focus-visible:ring-0"
           />
-          <div className="flex flex-shrink-0 items-center gap-0.5">
-            {!speech.isListening && (
+          <div className="flex items-center justify-between py-1">
+            <div className="flex items-center">
               <Button
                 type="button"
                 size="icon"
                 variant="ghost"
-                title={
-                  speech.isSupported
-                    ? "Nhập bằng giọng nói"
-                    : "Trình duyệt không hỗ trợ ghi âm"
-                }
-                disabled={!speech.isSupported}
-                onClick={startRecording}
+                title="Đính kèm"
+                onClick={attach.open}
                 className="hover:bg-foreground/5"
               >
-                <Mic />
+                <Plus />
               </Button>
-            )}
-            <Button
-              type="button"
-              size="icon"
-              variant={canSend ? "default" : "ghost"}
-              title="Gửi"
-              onClick={submit}
-              disabled={!canSend}
-              className={
-                canSend
-                  ? ""
-                  : "disabled:opacity-100 bg-transparent hover:bg-transparent shadow-none"
-              }
-            >
-              <Send />
-            </Button>
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                title="Gợi ý nhanh"
+                onClick={() => setShowQuick((v) => !v)}
+                className={cn(
+                  "hover:bg-foreground/5",
+                  showQuick && "bg-primary/10 text-primary hover:bg-primary/15"
+                )}
+              >
+                <Lightbulb />
+              </Button>
+            </div>
+            <div className="flex items-center gap-0.5">
+              {!speech.isListening && (
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  title={
+                    speech.isSupported
+                      ? "Nhập bằng giọng nói"
+                      : "Trình duyệt không hỗ trợ ghi âm"
+                  }
+                  disabled={!speech.isSupported}
+                  onClick={startRecording}
+                  className="hover:bg-foreground/5"
+                >
+                  <Mic />
+                </Button>
+              )}
+              <Button
+                type="button"
+                size="icon"
+                variant={canSend ? "default" : "ghost"}
+                title="Gửi"
+                onClick={submit}
+                disabled={!canSend}
+                className={
+                  canSend
+                    ? ""
+                    : "disabled:opacity-100 bg-transparent hover:bg-transparent shadow-none"
+                }
+              >
+                <Send />
+              </Button>
+            </div>
           </div>
 
           {speech.isListening && (

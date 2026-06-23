@@ -3,7 +3,6 @@ import { useWidgetStore } from "@/store/useWidgetStore";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { QuickSheetContent } from "./QuickSheetContent";
 
 export function MoreSheetContent() {
   const { newChat, cycleTheme, theme, closeSheet } = useWidgetStore();
@@ -39,10 +38,6 @@ export function MoreSheetContent() {
         </div>
       </div>
 
-      <p className="mb-1 mt-4 px-3 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-        Gợi ý
-      </p>
-      <QuickSheetContent />
     </div>
   );
 }

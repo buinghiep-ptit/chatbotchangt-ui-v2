@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { SquarePen, Search, MessageSquareText, Pin } from 'lucide-react'
 import { useWidgetStore } from '@/store/useWidgetStore'
 import { Button } from '@/components/ui/button'
@@ -15,6 +16,10 @@ const WEEK = [
 
 export function HistorySheetContent() {
   const { newChat, closeSheet } = useWidgetStore()
+  const searchRef = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    requestAnimationFrame(() => searchRef.current?.focus())
+  }, [])
   return (
     <div className="flex flex-col pb-2">
       <div className="flex items-center gap-2.5 px-3.5 pt-1 pb-2">
@@ -26,6 +31,7 @@ export function HistorySheetContent() {
       <div className="mx-3.5 mb-1 flex items-center gap-2 rounded-[10px] border border-border bg-muted/60 px-2.5 py-2">
         <Search className="h-[17px] w-[17px] text-muted-foreground" />
         <Input
+          ref={searchRef}
           className="h-auto flex-1 border-0 bg-transparent px-0 py-0 rounded-none text-[13px] shadow-none focus-visible:ring-0"
           placeholder="Tìm trong hội thoại…"
         />

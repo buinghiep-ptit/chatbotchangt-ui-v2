@@ -76,3 +76,24 @@ export interface Notification {
 
 export type Theme = 'light' | 'dark'
 export type Tab = 'chat' | 'tasks' | 'noti' | 'history' | 'more'
+
+/** A query template shown under a "fill" category. `command` may contain an
+ *  `{input}` placeholder; selecting it fills the composer so the user keeps typing. */
+export interface QuickQueryItem {
+  id: string
+  title: string
+  command: string
+}
+
+/** A FAQ entry shown under a "dynamic" category. Selecting it only shows the answer. */
+export interface QuickFaqItem {
+  id: string
+  question: string
+  answer: string
+}
+
+/** A quick-suggestion chip. Mirrors the chatbot-sdk tab model: static query
+ *  categories (fill the composer) and dynamic FAQ categories (show info only). */
+export type QuickSuggestion =
+  | { icon: string; label: string; type: 'fill'; items: QuickQueryItem[] }
+  | { icon: string; label: string; type: 'dynamic'; items: QuickFaqItem[] }

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { Attachment, Message, Notification, Task, TaskFilter, Tab, Theme } from '@/types'
+import type { Attachment, Message, Notification, Task, TaskFilter, Tab, Theme, QuickSuggestion } from '@/types'
 import { SEED_TASKS } from '@/data/tasks'
 import { SEED_NOTIFICATIONS } from '@/data/notifications'
 import { SEED_MESSAGES, GREETING_HTML } from '@/data/messages'
@@ -10,6 +10,9 @@ interface WidgetState {
   taskFilter: TaskFilter
   sheetTab: 'history' | 'more' | null
   brickSheetOpen: boolean
+  quickDetailSheet: QuickSuggestion | null
+  /** A fill request the composer consumes — set when a query template is picked. */
+  composerFillRequest: string | null
 
   messages: Message[]
   isTyping: boolean
@@ -26,6 +29,11 @@ interface WidgetState {
   closeSheet: () => void
   openBrickSheet: () => void
   closeBrickSheet: () => void
+  openQuickDetailSheet: (suggestion: QuickSuggestion) => void
+  closeQuickDetailSheet: () => void
+  /** Fill the composer with a query template and close the quick-detail sheet. */
+  fillComposer: (text: string) => void
+  consumeComposerFill: () => void
 
   // selectors
   pendingTaskCount: () => number
@@ -63,6 +71,8 @@ const initialState = () => ({
   taskFilter: 'pending' as TaskFilter,
   sheetTab: null as 'history' | 'more' | null,
   brickSheetOpen: false,
+  quickDetailSheet: null as QuickSuggestion | null,
+  composerFillRequest: null as string | null,
   messages: SEED_MESSAGES.map((m) => ({ ...m })),
   isTyping: false,
   tasks: SEED_TASKS,
@@ -109,6 +119,10 @@ export const useWidgetStore = create<WidgetState>((set, get) => ({
   closeSheet: () => set({ sheetTab: null, activeTab: 'chat' }),
   openBrickSheet: () => set({ brickSheetOpen: true }),
   closeBrickSheet: () => set({ brickSheetOpen: false }),
+  openQuickDetailSheet: (suggestion) => set({ quickDetailSheet: suggestion }),
+  closeQuickDetailSheet: () => set({ quickDetailSheet: null }),
+  fillComposer: (text) => set({ composerFillRequest: text, quickDetailSheet: null }),
+  consumeComposerFill: () => set({ composerFillRequest: null }),
 
   pendingTaskCount: () => get().tasks.filter((t) => t.bucket.includes('pending')).length,
   unreadNotiCount: () => get().notifications.filter((n) => n.unread).length,

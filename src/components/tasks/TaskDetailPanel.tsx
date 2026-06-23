@@ -36,6 +36,7 @@ export function TaskDetailPanel() {
         <StatusBadge status={task.status} />
       </div>
 
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto scrollbar-thin px-3.5 pb-1.5 pt-3.5">
         {/* collapsible info cluster */}
         <div className="mb-4 overflow-hidden rounded-[14px] border border-border">
@@ -80,6 +81,8 @@ export function TaskDetailPanel() {
           {SUGGESTIONS.map((s) => <Chip key={s} onClick={() => sendTaskMessage(task.id, s)}>{s}</Chip>)}
         </div>
         <div ref={endRef} />
+      </div>
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-card to-transparent" />
       </div>
 
       <Composer placeholder="Trao đổi thêm về công việc này…" onSend={(t) => sendTaskMessage(task.id, t)} />
