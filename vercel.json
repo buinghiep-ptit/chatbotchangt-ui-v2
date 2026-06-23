@@ -3,10 +3,13 @@
   "buildCommand": "yarn build",
   "outputDirectory": "dist",
   "redirects": [
-    { "source": "/", "destination": "/ai-agent/sdk/", "permanent": false },
-    { "source": "/ai-agent/sdk", "destination": "/ai-agent/sdk/", "permanent": false }
+    { "source": "/", "destination": "/ai-agent/sdk/", "permanent": false }
   ],
   "rewrites": [
-    { "source": "/ai-agent/sdk/:path*", "destination": "/:path*" }
+    { "source": "/ai-agent/sdk/assets/:path*", "destination": "/assets/:path*" },
+    { "source": "/ai-agent/sdk/favicon.svg", "destination": "/favicon.svg" },
+    { "source": "/ai-agent/sdk/icons.svg", "destination": "/icons.svg" },
+    { "source": "/ai-agent/sdk", "destination": "/index.html" },
+    { "source": "/ai-agent/sdk/:path*", "destination": "/index.html" }
   ]
 }
