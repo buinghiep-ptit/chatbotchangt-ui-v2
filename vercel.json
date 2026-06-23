@@ -10,6 +10,7 @@
     { "source": "/ai-agent/sdk/favicon.svg", "destination": "/favicon.svg" },
     { "source": "/ai-agent/sdk/icons.svg", "destination": "/icons.svg" },
     { "source": "/ai-agent/sdk", "destination": "/index.html" },
+    { "source": "/ai-agent/sdk/", "destination": "/index.html" },
     { "source": "/ai-agent/sdk/:path*", "destination": "/index.html" }
   ]
 }
