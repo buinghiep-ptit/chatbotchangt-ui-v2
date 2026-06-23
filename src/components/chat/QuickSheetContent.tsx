@@ -8,7 +8,7 @@ const ICONS = { FileText, Search, BellRing, Mail } as const
 export function QuickSheetContent() {
   const { sendChatMessage, closeSheet } = useWidgetStore()
   return (
-    <div className="flex flex-wrap gap-2 p-4">
+    <div className="flex flex-wrap gap-2 px-4 pb-2">
       {QUICK_SUGGESTIONS.map(({ icon, label }) => {
         const Icon = ICONS[icon as keyof typeof ICONS]
         return (

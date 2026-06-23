@@ -8,7 +8,6 @@ import { TabBar } from './TabBar'
 import { BottomSheet } from './BottomSheet'
 import { ChatPanel } from './chat/ChatPanel'
 import { HistorySheetContent } from './chat/HistorySheetContent'
-import { QuickSheetContent } from './chat/QuickSheetContent'
 import { MoreSheetContent } from './chat/MoreSheetContent'
 import { BrickSheetContent } from './chat/BrickSheetContent'
 import { TasksView } from './tasks/TasksView'
@@ -88,9 +87,8 @@ export function ChangWidget() {
           </AnimatePresence>
           <AnimatePresence>
             {sheetTab && (
-              <BottomSheet key="sheet" onDismiss={closeSheet}>
+              <BottomSheet key="sheet" onDismiss={closeSheet} maxHeight={sheetTab === 'history' ? '80%' : '60%'}>
                 {sheetTab === 'history' && <HistorySheetContent />}
-                {sheetTab === 'quick' && <QuickSheetContent />}
                 {sheetTab === 'more' && <MoreSheetContent />}
               </BottomSheet>
             )}

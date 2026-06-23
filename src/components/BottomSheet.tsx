@@ -4,6 +4,7 @@ import { SPRING, shouldDismiss } from '@/lib/motion'
 interface BottomSheetProps {
   children: React.ReactNode
   onDismiss: () => void
+  maxHeight?: string
 }
 
 /**
@@ -12,11 +13,12 @@ interface BottomSheetProps {
  * enter, down on exit. Drag-to-dismiss is initiated only from the grabber so the
  * sheet body still scrolls normally.
  */
-export function BottomSheet({ children, onDismiss }: BottomSheetProps) {
+export function BottomSheet({ children, onDismiss, maxHeight = '60%' }: BottomSheetProps) {
   const controls = useDragControls()
   return (
     <motion.div
-      className="absolute bottom-0 left-0 right-0 z-20 max-h-[60%] overflow-y-auto rounded-t-2xl bg-card border-t border-border"
+      className="absolute bottom-0 left-0 right-0 z-20 overflow-y-auto rounded-t-2xl bg-card border-t border-border"
+      style={{ maxHeight }}
       initial={{ y: '100%' }}
       animate={{ y: 0 }}
       exit={{ y: '100%' }}

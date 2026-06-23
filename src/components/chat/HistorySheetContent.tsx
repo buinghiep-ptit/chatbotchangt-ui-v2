@@ -1,4 +1,4 @@
-import { SquarePen, Search, MessageSquare, Pin } from 'lucide-react'
+import { SquarePen, Search, MessageSquareText, Pin } from 'lucide-react'
 import { useWidgetStore } from '@/store/useWidgetStore'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -31,8 +31,8 @@ export function HistorySheetContent() {
         />
       </div>
       <HistoryGroup title="Đã ghim" items={PINNED} Icon={Pin} onPick={closeSheet} />
-      <HistoryGroup title="Hôm nay" items={TODAY} Icon={MessageSquare} onPick={closeSheet} />
-      <HistoryGroup title="7 ngày qua" items={WEEK} Icon={MessageSquare} onPick={closeSheet} />
+      <HistoryGroup title="Hôm nay" items={TODAY} Icon={MessageSquareText} onPick={closeSheet} />
+      <HistoryGroup title="7 ngày qua" items={WEEK} Icon={MessageSquareText} onPick={closeSheet} />
     </div>
   )
 }
@@ -45,7 +45,7 @@ function HistoryGroup({
       <div className="px-4 pb-1.5 pt-3 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{title}</div>
       {items.map((it) => (
         <Button key={it.title} variant="ghost" onClick={onPick}
-          className="flex h-auto w-full items-start justify-start gap-2.5 rounded-none px-4 py-2.5 text-left">
+          className="flex h-auto w-full items-start justify-start gap-2.5 rounded-none px-4 py-2.5 text-left hover:bg-foreground/5 active:bg-foreground/10">
           <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
           <div className="min-w-0 flex-1">
             <div className="truncate text-[13px] font-medium">{it.title}</div>

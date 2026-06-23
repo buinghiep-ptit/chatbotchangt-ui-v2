@@ -8,7 +8,7 @@ interface WidgetState {
   activeTab: Tab
   currentTaskId: string | null
   taskFilter: TaskFilter
-  sheetTab: 'history' | 'quick' | 'more' | null
+  sheetTab: 'history' | 'more' | null
   brickSheetOpen: boolean
 
   messages: Message[]
@@ -61,7 +61,7 @@ const initialState = () => ({
   activeTab: 'chat' as Tab,
   currentTaskId: null as string | null,
   taskFilter: 'pending' as TaskFilter,
-  sheetTab: null as 'history' | 'quick' | 'more' | null,
+  sheetTab: null as 'history' | 'more' | null,
   brickSheetOpen: false,
   messages: SEED_MESSAGES.map((m) => ({ ...m })),
   isTyping: false,
@@ -89,7 +89,7 @@ export const useWidgetStore = create<WidgetState>((set, get) => ({
   ...initialState(),
 
   switchTab: (tab) => {
-    if (tab === 'history' || tab === 'quick' || tab === 'more') {
+    if (tab === 'history' || tab === 'more') {
       const alreadyOpen = get().sheetTab === tab
       if (alreadyOpen) {
         set({ sheetTab: null, activeTab: 'chat' })

@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Paperclip, Mic, Send, X, Check } from "lucide-react";
+import { Plus, Mic, Send, X, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
@@ -59,12 +59,9 @@ export function Composer({
   };
 
   return (
-    <div
-      className="flex-shrink-0 border-t border-border/60 px-3 py-2"
-      {...attach.getRootProps()}
-    >
+    <div className="flex-shrink-0 px-3 pb-2" {...attach.getRootProps()}>
       <input {...attach.getInputProps()} />
-      <div className="rounded-[14px] border border-border bg-muted/60 focus-within:border-primary">
+      <div className="rounded-[14px] border border-border focus-within:border-primary">
         {attach.files.length > 0 && (
           <FileChips files={attach.files} onRemove={attach.removeFile} />
         )}
@@ -75,9 +72,9 @@ export function Composer({
             variant="ghost"
             title="Đính kèm"
             onClick={attach.open}
-            className="flex-shrink-0"
+            className="flex-shrink-0 hover:bg-foreground/5"
           >
-            <Paperclip />
+            <Plus />
           </Button>
           <Textarea
             rows={1}
@@ -110,42 +107,59 @@ export function Composer({
             }}
             className="min-h-0 max-h-[160px] flex-1 resize-none border-0 bg-transparent px-0 py-1.5 text-[13.5px] md:text-[13.5px] shadow-none focus-visible:ring-0"
           />
-          {!speech.isListening && (
+          <div className="flex flex-shrink-0 items-center gap-0.5">
+            {!speech.isListening && (
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                title={
+                  speech.isSupported
+                    ? "Nhập bằng giọng nói"
+                    : "Trình duyệt không hỗ trợ ghi âm"
+                }
+                disabled={!speech.isSupported}
+                onClick={startRecording}
+                className="hover:bg-foreground/5"
+              >
+                <Mic />
+              </Button>
+            )}
             <Button
               type="button"
               size="icon"
-              variant="ghost"
-              title={
-                speech.isSupported
-                  ? "Nhập bằng giọng nói"
-                  : "Trình duyệt không hỗ trợ ghi âm"
+              variant={canSend ? "default" : "ghost"}
+              title="Gửi"
+              onClick={submit}
+              disabled={!canSend}
+              className={
+                canSend
+                  ? ""
+                  : "disabled:opacity-100 bg-transparent hover:bg-transparent shadow-none"
               }
-              disabled={!speech.isSupported}
-              onClick={startRecording}
-              className="flex-shrink-0"
             >
-              <Mic />
+              <Send />
             </Button>
-          )}
-          <Button
-            type="button"
-            size="icon"
-            title="Gửi"
-            onClick={submit}
-            disabled={!canSend}
-            className="flex-shrink-0"
-          >
-            <Send />
-          </Button>
+          </div>
 
           {speech.isListening && (
             <div
               data-testid="recording-overlay"
-              className="absolute inset-0 z-10 flex items-center justify-center gap-3 rounded-[14px] bg-muted"
+              className="absolute inset-0 z-10 flex items-center rounded-[14px] bg-muted px-1"
             >
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                title="Hủy ghi âm"
+                aria-label="Hủy ghi âm"
+                onClick={cancelRecording}
+                className="flex-shrink-0"
+              >
+                <X />
+              </Button>
               <div
                 className="flex flex-1 items-center justify-center gap-[2px]"
-                style={{ maxWidth: 200 }}
                 aria-hidden="true"
               >
                 {WAVE_BARS.map((h, i) => (
@@ -156,30 +170,17 @@ export function Composer({
                   />
                 ))}
               </div>
-              <div className="flex flex-shrink-0 items-center">
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="ghost"
-                  title="Hủy ghi âm"
-                  aria-label="Hủy ghi âm"
-                  onClick={cancelRecording}
-                  className="text-destructive hover:text-destructive"
-                >
-                  <X />
-                </Button>
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="ghost"
-                  title="Lưu ghi âm"
-                  aria-label="Lưu ghi âm"
-                  onClick={confirmRecording}
-                  className="text-[hsl(var(--status-done))] hover:text-[hsl(var(--status-done))]"
-                >
-                  <Check />
-                </Button>
-              </div>
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                title="Lưu ghi âm"
+                aria-label="Lưu ghi âm"
+                onClick={confirmRecording}
+                className="flex-shrink-0"
+              >
+                <Check />
+              </Button>
             </div>
           )}
         </div>

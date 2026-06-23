@@ -75,4 +75,4 @@ export interface Notification {
 }
 
 export type Theme = 'light' | 'dark'
-export type Tab = 'chat' | 'tasks' | 'noti' | 'history' | 'quick' | 'more'
+export type Tab = 'chat' | 'tasks' | 'noti' | 'history' | 'more'
