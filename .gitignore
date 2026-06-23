@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Playwright MCP snapshots & root-level verify screenshots (throwaway artifacts)
+.playwright-mcp/
+/*.png

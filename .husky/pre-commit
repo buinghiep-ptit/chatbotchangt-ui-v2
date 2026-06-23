@@ -1,0 +1,2 @@
+echo "🔍 pre-commit: lint + typecheck + test"
+yarn lint && yarn typecheck && yarn test

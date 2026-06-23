@@ -1,0 +1,2 @@
+echo "🏗️  pre-push: full build (tsc + vite) + test"
+yarn build && yarn test

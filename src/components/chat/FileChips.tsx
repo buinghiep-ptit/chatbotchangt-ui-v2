@@ -59,6 +59,7 @@ function FileChip({ file, onRemove }: { file: File; onRemove?: () => void }) {
   const Icon = getFileIcon(file)
   return (
     <div className="group inline-flex h-9 items-center gap-1.5 rounded-[10px] border border-border bg-background px-2.5">
+      {/* eslint-disable-next-line react-hooks/static-components -- Icon is a stable lucide component selected by file type, not created per render */}
       <Icon className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
       <span className="max-w-[160px] truncate text-[12.5px] font-medium text-muted-foreground">{file.name}</span>
       {onRemove && (

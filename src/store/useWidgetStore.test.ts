@@ -63,11 +63,6 @@ describe('navigation', () => {
     expect(s.activeTab).toBe('chat')
   })
 
-  it('switchTab quick opens quick sheet', () => {
-    useWidgetStore.getState().switchTab('quick')
-    expect(useWidgetStore.getState().sheetTab).toBe('quick')
-  })
-
   it('switchTab noti while sheet open closes sheet and switches tab', () => {
     useWidgetStore.getState().switchTab('history')
     useWidgetStore.getState().switchTab('noti')

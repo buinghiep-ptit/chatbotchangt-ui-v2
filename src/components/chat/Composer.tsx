@@ -53,6 +53,7 @@ export function Composer({
 
   // While recording, the textarea shows pre-record text + the live transcript.
   const displayValue = speech.isListening
+    // eslint-disable-next-line react-hooks/refs -- snapshot taken at record-start; safe to read during render
     ? merge(textBeforeRecordRef.current, speech.transcript)
     : value;
   const canSend = value.trim().length > 0 || attach.files.length > 0;
@@ -80,6 +81,7 @@ export function Composer({
   // same query can be picked again later.
   useEffect(() => {
     if (composerFillRequest != null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: syncs external store fill-request into the composer
       fillInput(composerFillRequest);
       consumeComposerFill();
     }

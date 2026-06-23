@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import tailwindcssAnimate from 'tailwindcss-animate'
 
 export default {
   darkMode: 'class',
@@ -32,5 +33,5 @@ export default {
       animation: { blink: 'blink 1.2s infinite', drift: 'drift 18s ease-in-out infinite' },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [tailwindcssAnimate],
 } satisfies Config

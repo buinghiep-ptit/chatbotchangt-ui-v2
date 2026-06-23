@@ -1,13 +1,11 @@
 import { useState } from 'react'
 import { Bot, Maximize2, Minimize2, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useWidgetStore } from '@/store/useWidgetStore'
 import { hostBridge } from '@/lib/hostBridge'
 import { readWidgetParams } from '@/lib/surface'
 import { Button } from '@/components/ui/button'
 
 export function Header() {
-  const { activeTab: _activeTab } = useWidgetStore()
   const { isAllowExpandBot } = readWidgetParams()
   const [maximized, setMaximized] = useState(false)
 

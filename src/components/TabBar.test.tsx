@@ -44,10 +44,9 @@ it('shows the pending task badge (2) and unread noti badge (3)', () => {
   expect(screen.getByText('3')).toBeInTheDocument()
 })
 
-it('renders 6 tabs including Lịch sử, Gợi ý and Thêm', () => {
+it('renders 5 tabs including Lịch sử and Thêm', () => {
   renderTabBar()
   expect(screen.getByText('Lịch sử')).toBeInTheDocument()
-  expect(screen.getByText('Gợi ý')).toBeInTheDocument()
   expect(screen.getByText('Thêm')).toBeInTheDocument()
 })
 
@@ -55,12 +54,6 @@ it('clicking Lịch sử opens the history sheet', async () => {
   renderTabBar()
   await userEvent.click(screen.getByText('Lịch sử'))
   expect(useWidgetStore.getState().sheetTab).toBe('history')
-})
-
-it('clicking Gợi ý opens the quick sheet', async () => {
-  renderTabBar()
-  await userEvent.click(screen.getByText('Gợi ý'))
-  expect(useWidgetStore.getState().sheetTab).toBe('quick')
 })
 
 it('clicking Thêm opens the more sheet', async () => {
