@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "yarn build",
+  "outputDirectory": "dist",
+  "redirects": [
+    { "source": "/", "destination": "/ai-agent/sdk/", "permanent": false },
+    { "source": "/ai-agent/sdk", "destination": "/ai-agent/sdk/", "permanent": false }
+  ],
+  "rewrites": [
+    { "source": "/ai-agent/sdk/:path*", "destination": "/:path*" }
+  ]
+}
