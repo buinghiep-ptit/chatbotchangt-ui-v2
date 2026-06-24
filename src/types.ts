@@ -97,3 +97,13 @@ export interface QuickFaqItem {
 export type QuickSuggestion =
   | { icon: string; label: string; type: 'fill'; items: QuickQueryItem[] }
   | { icon: string; label: string; type: 'dynamic'; items: QuickFaqItem[] }
+
+/** A slash skill suggested while typing `/…` in the composer. Mirrors the
+ *  chatbot-sdk skill popup (fetched from API there — fake/static here).
+ *  `slashCommand` is the ASCII token inserted into the input (e.g. `/sla`). */
+export interface Skill {
+  id: string
+  name: string
+  slashCommand: string
+  description: string
+}

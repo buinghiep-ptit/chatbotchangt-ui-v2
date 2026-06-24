@@ -7,8 +7,11 @@ import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { useFileAttachments } from "@/hooks/useFileAttachments";
 import { useWidgetStore } from "@/store/useWidgetStore";
 import { FileChips } from "./FileChips";
+import { SkillPopup } from "./SkillPopup";
 import { Chip } from "../shared/Chip";
 import { QUICK_SUGGESTIONS } from "@/data/messages";
+import { filterSkills } from "@/data/skills";
+import type { Skill } from "@/types";
 import { cn } from "@/lib/utils";
 import { composerRef } from "@/lib/composerRef";
 
@@ -35,6 +38,11 @@ export function Composer({
 }) {
   const [value, setValue] = useState("");
   const [showQuick, setShowQuick] = useState(false);
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [skillsVisible, setSkillsVisible] = useState(false);
+  const [selectedSkillIndex, setSelectedSkillIndex] = useState(0);
+  // Index in `value` where the active `/word` starts (-1 when no popup).
+  const slashStartRef = useRef(-1);
   const textBeforeRecordRef = useRef("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const speech = useSpeechRecognition();
@@ -49,6 +57,51 @@ export function Composer({
     onSend(t, attach.files.length > 0 ? attach.files : undefined);
     setValue("");
     attach.clear();
+    closeSkillPopup();
+  };
+
+  const closeSkillPopup = () => {
+    setSkillsVisible(false);
+    slashStartRef.current = -1;
+  };
+
+  // Detect a `/word` immediately before the cursor and open the skill popup
+  // with matches. The token must start at line-start or after whitespace.
+  const detectSlash = (text: string, cursor: number) => {
+    const before = text.slice(0, cursor);
+    const match = before.match(/(?:^|\s)(\/\S*)$/);
+    if (!match) {
+      closeSkillPopup();
+      return;
+    }
+    const slashWord = match[1]; // e.g. "/sla"
+    const found = filterSkills(slashWord.slice(1));
+    if (found.length === 0) {
+      closeSkillPopup();
+      return;
+    }
+    slashStartRef.current = cursor - slashWord.length;
+    setSkills(found);
+    setSelectedSkillIndex(0);
+    setSkillsVisible(true);
+  };
+
+  const selectSkill = (skill: Skill) => {
+    const el = textareaRef.current;
+    if (!el || slashStartRef.current === -1) return;
+    const cursor = el.selectionStart ?? value.length;
+    const before = value.slice(0, slashStartRef.current);
+    const after = value.slice(cursor);
+    const next = `${before}${skill.slashCommand} ${after}`;
+    setValue(next);
+    closeSkillPopup();
+    const caret = before.length + skill.slashCommand.length + 1;
+    requestAnimationFrame(() => {
+      el.style.height = "auto";
+      el.style.height = `${Math.min(el.scrollHeight, MAX_TEXTAREA_HEIGHT)}px`;
+      el.focus();
+      el.setSelectionRange(caret, caret);
+    });
   };
 
   // While recording, the textarea shows pre-record text + the live transcript.
@@ -105,7 +158,26 @@ export function Composer({
   return (
     <div className="flex-shrink-0 px-3 pb-2" {...attach.getRootProps()}>
       <input {...attach.getInputProps()} />
-      <div className="rounded-[14px] border border-border focus-within:border-primary">
+      <div className="relative rounded-[14px] border border-border focus-within:border-primary">
+        <AnimatePresence initial={false}>
+          {skillsVisible && (
+            <motion.div
+              key="skills"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+              className="overflow-hidden"
+            >
+              <SkillPopup
+                skills={skills}
+                selectedIndex={selectedSkillIndex}
+                onSelect={selectSkill}
+                onHover={setSelectedSkillIndex}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
         <AnimatePresence initial={false}>
           {showQuick && (
             <motion.div
@@ -158,6 +230,7 @@ export function Composer({
               setValue(e.target.value);
               e.target.style.height = "auto";
               e.target.style.height = `${Math.min(e.target.scrollHeight, MAX_TEXTAREA_HEIGHT)}px`;
+              detectSlash(e.target.value, e.target.selectionStart ?? e.target.value.length);
             }}
             onPaste={(e) => {
               if (speech.isListening) return;
@@ -173,6 +246,28 @@ export function Composer({
               }
             }}
             onKeyDown={(e) => {
+              if (skillsVisible && skills.length > 0) {
+                if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  setSelectedSkillIndex((i) => (i + 1) % skills.length);
+                  return;
+                }
+                if (e.key === "ArrowUp") {
+                  e.preventDefault();
+                  setSelectedSkillIndex((i) => (i - 1 + skills.length) % skills.length);
+                  return;
+                }
+                if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+                  e.preventDefault();
+                  selectSkill(skills[selectedSkillIndex]);
+                  return;
+                }
+                if (e.key === "Escape") {
+                  e.preventDefault();
+                  closeSkillPopup();
+                  return;
+                }
+              }
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 submit();
