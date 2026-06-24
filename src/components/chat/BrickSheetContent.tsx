@@ -29,7 +29,7 @@ export function BrickSheetContent() {
       />
       <div className="flex justify-end gap-2">
         <Button variant="outline" size="sm" onClick={handleClose}>Đóng</Button>
-        <Button variant="destructive" size="sm" onClick={handleSubmit}>Gửi</Button>
+        <Button size="sm" disabled={!comment.trim()} onClick={handleSubmit}>Gửi</Button>
       </div>
     </div>
   )
